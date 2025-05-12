@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindMile 2.0 - Interactive Quiz Universe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome is still linked in case you use icons elsewhere, but not for header flow -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f0f2f5;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #5D5FEF;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4a4bc4;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Dynamic Gradient Background for Header */
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            70% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        #hero {
+            background: linear-gradient(135deg, #5D5FEF, #A777E3, #f72959, #6e8efb);
+            background-size: 400% 400%;
+            animation: gradientShift 25s ease infinite;
+        }
+
+        /* Initial state for elements animated by scroll/load - ADDED BY JS */
+        .js-initial-hidden {
+            opacity: 0;
+        }
+
+        /* Specific initial transforms - ADDED BY JS */
+        .js-fade-up {
+            transform: translateY(30px);
+        }
+
+        .js-fade-left {
+            transform: translateX(-50px);
+        }
+
+        .js-fade-right {
+            transform: translateX(50px);
+        }
+
+        .js-zoom-in {
+            transform: scale(0.8);
+        }
+
+
+        /* Final state (visible) - ADDED BY JS */
+        .is-visible {
+            opacity: 1 !important;
+            transform: translate(0, 0) scale(1) !important;
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+            will-change: opacity, transform;
+        }
+
+        /* Feature Card Hover Animation */
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) rotateZ(1deg);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Styles for GSAP animated elements in header */
+        .hero-interactive-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .interactive-item {
+            position: absolute;
+            user-select: none;
+            transition: none !important;
+            transform: translate(-50%, -50%);
+            /* Background color and shape will be defined by Tailwind classes in HTML */
+            /* Opacity will be controlled by GSAP and Tailwind opacity classes */
+        }
+
+        /* Adjust content z-index to be above GSAP layer */
+        #hero .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Tailwind colors (ensure these match your theme) */
+        .bg-brand-purple {
+            background-color: #5D5FEF;
+        }
+
+        .text-brand-purple {
+            color: #5D5FEF;
+        }
+
+        .border-brand-purple {
+            border-color: #5D5FEF;
+        }
+
+        .hover\:bg-brand-purple-dark:hover {
+            background-color: #4a4bc4;
+        }
+
+        .bg-brand-gray {
+            background-color: #f0f2f5;
+        }
+
+        .text-brand-gray-text {
+            color: #333333;
+        }
+
+        .text-brand-gray-subtle {
+            color: #6b7280;
+        }
+
+        /* === FOOTER THEME - PLACEHOLDER (Light Theme) === */
+        /* === FOOTER TEXT HOVER ANIMATIONS === */
+
+        /* General transition for smoother hover effects on text within the footer */
+        #contact h5,
+        #contact p,
+        #contact ul li a {
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+
+        /* Paragraph text hover effect (subtle) */
+        #contact p:hover {
+            /* color: #374151; */
+            /* Slightly darker gray on hover - optional */
+            /* transform: scale(1.01); */
+            /* Very subtle scale - can be too much */
+        }
+
+        /* List item links hover effect */
+        #contact ul li a {
+            position: relative;
+            /* Needed for the pseudo-element underline */
+            text-decoration: none;
+            /* Remove default underline */
+            padding-bottom: 2px;
+            /* Space for the underline */
+        }
+
+        /* Create an underline pseudo-element */
+        #contact ul li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            /* Start with no width */
+            height: 1.5px;
+            /* Thickness of the underline */
+            bottom: 0;
+            left: 0;
+            background-color: #5D5FEF;
+            /* Brand purple for underline */
+            transition: width 0.3s ease-out;
+            /* Animate width on hover */
+            visibility: hidden;
+            /* Hide initially */
+        }
+
+        /* Animate the underline on link hover */
+        #contact ul li a:hover::after {
+            width: 100%;
+            /* Expand to full width */
+            visibility: visible;
+            /* Make visible */
+        }
+
+        #contact ul li a:hover {
+            color: #5D5FEF;
+            /* Ensure link text changes to brand purple on hover (already in previous styles but good to reinforce) */
+            transform: translateY(-1px);
+            /* Slight lift for links */
+        }
+
+        /* Social Icons hover effect (if you want to animate them too) */
+        #contact .flex.space-x-4 a {
+            /* Targets the social icon links */
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        #contact .flex.space-x-4 a:hover {
+            transform: scale(1.2) translateY(-2px);
+            /* Scale up and lift */
+            color: #5D5FEF;
+            /* Change icon color to brand purple */
+        }
+
+        /* Copyright text hover effect (very subtle if desired) */
+        #contact .text-gray-400 p:hover {
+            /* Target the p tag inside the copyright div */
+            /* color: #374151; */
+            /* Optional: slightly darker */
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script>
+        // Ensure the script runs after the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+
+            console.log("DOM fully loaded and parsed.");
+
+            // --- Mobile Menu Toggle ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuIcon = mobileMenuButton ? mobileMenuButton.querySelector('i') : null;
+
+            if (mobileMenuButton && mobileMenu && mobileMenuIcon) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                    if (mobileMenu.classList.contains('hidden')) {
+                        mobileMenuIcon.classList.remove('fa-times');
+                        mobileMenuIcon.classList.add('fa-bars');
+                    } else {
+                        mobileMenuIcon.classList.remove('fa-bars');
+                        mobileMenuIcon.classList.add('fa-times');
+                    }
+                });
+                document.querySelectorAll('#mobile-menu a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (!mobileMenu.classList.contains('hidden')) {
+                            mobileMenu.classList.add('hidden');
+                            mobileMenuIcon.classList.remove('fa-times');
+                            mobileMenuIcon.classList.add('fa-bars');
+                        }
+                    });
+                });
+                console.log("Mobile menu logic initialized.");
+            } else {
+                console.warn("Mobile menu elements not found.");
+            }
+
+
+            // --- Set Current Year in Footer ---
+            const currentYearSpan = document.getElementById('currentYear');
+            if (currentYearSpan) {
+                currentYearSpan.textContent = new Date().getFullYear();
+                console.log("Current year set in footer.");
+            } else {
+                console.warn("Footer element '#currentYear' not found.");
+            }
+
+
+            // --- Smooth Scrolling for Navigation Links ---
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId && targetId !== '#' && document.querySelector(targetId)) {
+                        e.preventDefault();
+                        document.querySelector(targetId).scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                        console.log(`Smooth scrolling to ${targetId}`);
+                    }
+                });
+            });
+            console.log("Smooth scrolling initialized.");
+
+
+            // --- Scroll-triggered Animations using Intersection Observer ---
+            const elementsToAnimate = document.querySelectorAll('[data-animation-type]');
+
+            if (!('IntersectionObserver' in window)) {
+                console.warn("IntersectionObserver not supported. Animations disabled.");
+                elementsToAnimate.forEach(el => el.style.opacity = 1);
+            } else {
+                console.log("IntersectionObserver supported. Initializing scroll animations.");
+
+                const observerOptions = {
+                    root: null,
+                    rootMargin: '0px',
+                    threshold: 0.1
+                };
+
+                const observer = new IntersectionObserver((entries, obs) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const el = entry.target;
+                            const delay = el.dataset.delay ? parseFloat(el.dataset.delay) : 0;
+                            el.style.transitionDelay = `${delay}s`;
+                            el.classList.add('is-visible');
+                            obs.unobserve(entry.target);
+                            el.addEventListener('transitionend', function handler() {
+                                el.classList.remove('js-initial-hidden', 'js-fade-up', 'js-fade-left', 'js-fade-right', 'js-zoom-in');
+                                el.style.transitionDelay = '';
+                                el.removeEventListener('transitionend', handler);
+                            });
+                        }
+                    });
+                }, observerOptions);
+
+                elementsToAnimate.forEach(el => {
+                    const animationType = el.dataset.animationType || 'fadeInUp';
+                    el.classList.add('js-initial-hidden');
+                    switch (animationType) {
+                        case 'fadeInUp': el.classList.add('js-fade-up'); break;
+                        case 'fadeInLeft': el.classList.add('js-fade-left'); break;
+                        case 'fadeInRight': el.classList.add('js-fade-right'); break;
+                        case 'zoomIn': el.classList.add('js-zoom-in'); break;
+                        default: console.warn(`Unknown animation type: ${animationType}`, el); break;
+                    }
+                    const rect = el.getBoundingClientRect();
+                    const isInView = rect.top < window.innerHeight * 1.1 && rect.bottom > 0;
+                    if (el.closest('#hero') || (isInView && window.getComputedStyle(el).display !== 'none')) {
+                        console.log("Animating element on load:", el);
+                        const delay = el.dataset.delay ? parseFloat(el.dataset.delay) : 0;
+                        el.style.transitionDelay = `${delay}s`;
+                        setTimeout(() => {
+                            el.classList.add('is-visible');
+                        }, 50);
+                    } else {
+                        console.log("Observing element for scroll:", el);
+                        observer.observe(el);
+                    }
+                });
+            }
+
+
+            // --- GSAP Header Animation with Mouse Interaction (Shapes Only) ---
+            const interactiveContainer = document.querySelector('.hero-interactive-elements');
+            const interactiveItems = document.querySelectorAll('.interactive-item'); // Now these are only shapes
+            const header = document.querySelector('#hero');
+
+            if (interactiveContainer && interactiveItems.length > 0 && header && window.gsap) {
+                console.log("Initializing GSAP header animation with mouse interaction (Shapes Only).");
+
+                interactiveItems.forEach((item, index) => {
+                    if (!item.style.top || !item.style.left) {
+                        item.style.top = `${Math.random() * 100}%`;
+                        item.style.left = `${Math.random() * 100}%`;
+                    }
+                    item.dataset.originalTop = item.style.top;
+                    item.dataset.originalLeft = item.style.left;
+
+                    // Initial GSAP animation for the shapes
+                    gsap.fromTo(item,
+                        { opacity: 0, scale: gsap.utils.random(0.2, 0.7) }, // Start smaller
+                        {
+                            opacity: parseFloat(window.getComputedStyle(item).opacity * 4) || 2.5, // Respect Tailwind opacity or default
+                            scale: 1,
+                            duration: gsap.utils.random(.5, .5),
+                            ease: "power3.out",
+                            delay: Math.random() * 1.5 + .2, // Slightly more delay and randomness
+                            onComplete: () => {
+                                startAbstractFlow(item);
+                            }
+                        }
+                    );
+                });
+
+                function startAbstractFlow(item) {
+                    gsap.killTweensOf(item);
+                    const headerRect = header.getBoundingClientRect();
+                    const headerWidth = headerRect.width;
+                    const headerHeight = headerRect.height;
+                    const itemWidth = item.offsetWidth || 20;
+                    const itemHeight = item.offsetHeight || 20;
+
+                    let targetX = gsap.utils.random(itemWidth / 2, headerWidth - itemWidth / 2);
+                    let targetY = gsap.utils.random(itemHeight / 2, headerHeight - itemHeight / 2);
+
+                    gsap.to(item, {
+                        x: targetX - (parseFloat(item.dataset.originalLeft) / 100 * headerWidth),
+                        y: targetY - (parseFloat(item.dataset.originalTop) / 100 * headerHeight),
+                        rotation: `+=${gsap.utils.random(-270, 270)}`, // More varied rotation
+                        duration: gsap.utils.random(10, 20), // Slower, gentler flow duration
+                        ease: "sine.inOut",
+                        onComplete: () => startAbstractFlow(item)
+                    });
+                }
+
+                const sensitivity = 0.06; // Slightly increased sensitivity for shapes
+                const maxMoveFromCenter = 120; // Max pixels item can be pulled
+
+                const handleMouseMove = (e) => {
+                    const headerRect = header.getBoundingClientRect();
+                    const mouseX = e.clientX - headerRect.left;
+                    const mouseY = e.clientY - headerRect.top;
+
+                    interactiveItems.forEach((item, index) => {
+                        gsap.killTweensOf(item);
+                        let currentX = gsap.getProperty(item, "x");
+                        let currentY = gsap.getProperty(item, "y");
+                        const originalLeftPx = parseFloat(item.dataset.originalLeft) / 100 * headerRect.width;
+                        const originalTopPx = parseFloat(item.dataset.originalTop) / 100 * headerRect.height;
+                        const itemCenterX = originalLeftPx + currentX;
+                        const itemCenterY = originalTopPx + currentY;
+                        const dx = mouseX - itemCenterX;
+                        const dy = mouseY - itemCenterY;
+                        let targetGsapX = currentX + dx * sensitivity;
+                        let targetGsapY = currentY + dy * sensitivity;
+                        const distFromOriginalX = targetGsapX;
+                        const distFromOriginalY = targetGsapY;
+
+                        if (Math.abs(distFromOriginalX) > maxMoveFromCenter) {
+                            targetGsapX = distFromOriginalX > 0 ? maxMoveFromCenter : -maxMoveFromCenter;
+                        }
+                        if (Math.abs(distFromOriginalY) > maxMoveFromCenter) {
+                            targetGsapY = distFromOriginalY > 0 ? maxMoveFromCenter : -maxMoveFromCenter;
+                        }
+
+                        gsap.to(item, {
+                            x: targetGsapX,
+                            y: targetGsapY,
+                            rotation: `+=${(dx + dy) * 0.02}`, // More subtle rotation on mouse move
+                            duration: 0.4, // Faster reaction
+                            ease: "power1.out" // Softer ease
+                        });
+                    });
+                };
+
+                const handleMouseLeave = () => {
+                    interactiveItems.forEach((item, index) => {
+                        gsap.killTweensOf(item);
+                        startAbstractFlow(item);
+                    });
+                };
+
+                header.addEventListener('mousemove', handleMouseMove);
+                header.addEventListener('mouseleave', handleMouseLeave);
+
+                let resizeTimeout;
+                window.addEventListener('resize', () => {
+                    clearTimeout(resizeTimeout);
+                    resizeTimeout = setTimeout(() => {
+                        console.log("Window resized. Restarting GSAP animations.");
+                        interactiveItems.forEach(item => {
+                            gsap.killTweensOf(item);
+                            startAbstractFlow(item);
+                        });
+                    }, 250);
+                });
+
+            } else {
+                console.warn("GSAP header animation elements not found or GSAP not loaded.");
+                interactiveItems.forEach(item => item.style.opacity = 1);
+            }
+
+            console.log("Script execution finished.");
+
+        }); // End of DOMContentLoaded
+    </script>
+</head>
+
+<body class="bg-brand-gray font-sans antialiased text-brand-gray-text">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="#" class="text-3xl font-bold text-brand-purple">
+                    MindMile <span class="text-xl font-normal text-brand-gray-subtle">2.0</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#hero"
+                        class="text-brand-gray-subtle hover:text-brand-purple transition-colors duration-300">Home</a>
+                    <a href="#features"
+                        class="text-brand-gray-subtle hover:text-brand-purple transition-colors duration-300">Features</a>
+                    <a href="#faq"
+                        class="text-brand-gray-subtle hover:text-brand-purple transition-colors duration-300">FAQ</a>
+                    <a href="#contact"
+                        class="text-brand-gray-subtle hover:text-brand-purple transition-colors duration-300">Contact</a>
+                </div>
+                <div class="hidden md:flex items-center space-x-3">
+                    <a href="#"
+                        class="py-2 px-5 text-brand-purple border border-brand-purple rounded-lg hover:bg-brand-purple hover:text-white transition-colors duration-300">Sign
+                        In</a>
+                    <!-- Sign Up Button -->
+                    <a href="#"
+                        class="py-2 px-5 bg-brand-purple text-white rounded-lg hover:bg-brand-purple-dark transition-colors duration-300">Sign
+                        Up</a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" class="text-brand-purple focus:outline-none">
+                        <i class="fas fa-bars fa-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="md:hidden hidden bg-white shadow-lg">
+            <a href="#features"
+                class="block py-3 px-6 text-sm text-brand-gray-subtle hover:bg-brand-purple hover:text-white transition-colors duration-300">Features</a>
+            <a href="#faq"
+                class="block py-3 px-6 text-sm text-brand-gray-subtle hover:bg-brand-purple hover:text-white transition-colors duration-300">FAQ</a>
+            <a href="#contact"
+                class="block py-3 px-6 text-sm text-brand-gray-subtle hover:bg-brand-purple hover:text-white transition-colors duration-300">Contact</a>
+            <div class="px-6 py-4 border-t border-gray-200">
+                <a href="#"
+                    class="block w-full text-center py-2 px-4 text-brand-purple border border-brand-purple rounded-lg hover:bg-brand-purple hover:text-white transition-colors duration-300 mb-2">Sign
+                    In</a>
+                <!-- Sign Up Button in Mobile Menu -->
+                <a href="#"
+                    class="block w-full text-center py-2 px-5 bg-brand-purple text-white rounded-lg hover:bg-brand-purple-dark transition-colors duration-300">Sign
+                    Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section with GSAP Interactive Elements and Gradient BG -->
+    <header id="hero"
+        class="py-16 md:py-24 relative min-h-[70vh] md:min-h-[80vh] flex items-center justify-center overflow-hidden">
+        <!-- GSAP Interactive Elements Container - SHAPES ONLY -->
+        <div class="hero-interactive-elements">
+            <!-- Add many shapes of different sizes and types -->
+            <div class="interactive-item w-8 h-8 bg-white opacity-10 rounded-full" style="top: 10%; left: 15%;"></div>
+            <div class="interactive-item w-12 h-12 bg-brand-purple opacity-15 rounded-full"
+                style="top: 20%; left: 75%;"></div>
+            <div class="interactive-item w-6 h-6 bg-white opacity-10 rounded-xl" style="top: 30%; left: 5%;"></div>
+            <!-- Cube -->
+            <div class="interactive-item w-10 h-10 bg-brand-purple opacity-15 rounded-xl" style="top: 40%; left: 88%;">
+            </div> <!-- Cube -->
+            <div class="interactive-item w-16 h-16 bg-white opacity-5 rounded-full" style="top: 50%; left: 40%;"></div>
+            <!-- Large Subtle Circle -->
+            <div class="interactive-item w-4 h-4 bg-brand-purple opacity-20 rounded-full" style="top: 60%; left: 12%;">
+            </div>
+            <div class="interactive-item w-14 h-14 bg-white opacity-5 rounded-xl" style="top: 70%; left: 60%;"></div>
+            <!-- Large Subtle Cube -->
+            <div class="interactive-item w-5 h-5 bg-brand-purple opacity-20 rounded-xl" style="top: 80%; left: 22%;">
+            </div> <!-- Cube -->
+            <div class="interactive-item w-20 h-20 bg-white opacity-5 rounded-full" style="top: 85%; left: 85%;"></div>
+            <!-- Very Large Subtle Circle -->
+            <div class="interactive-item w-7 h-7 bg-brand-purple opacity-15 rounded-full" style="top: 5%; left: 65%;">
+            </div>
+            <div class="interactive-item w-9 h-9 bg-white opacity-10 rounded-xl" style="top: 15%; left: 35%;"></div>
+            <!-- Cube -->
+            <div class="interactive-item w-11 h-11 bg-brand-purple opacity-15 rounded-full"
+                style="top: 33%; left: 60%;"></div>
+            <div class="interactive-item w-10 h-10 bg-white opacity-10 rounded-full" style="top: 68%; left: 30%;"></div>
+            <div class="interactive-item w-6 h-6 bg-brand-purple opacity-20 rounded-xl" style="top: 92%; left: 50%;">
+            </div> <!-- Cube -->
+            <div class="interactive-item w-12 h-12 bg-white opacity-5 rounded-lg" style="top: 45%; left: 18%;"></div>
+            <!-- Subtle Square -->
+            <div class="interactive-item w-8 h-8 bg-brand-purple opacity-15 rounded-md" style="top: 22%; left: 42%;">
+            </div> <!-- Subtle Square -->
+
+        </div>
+
+        <!-- Header Content -->
+        <div class="container mx-auto px-6 text-center relative z-10">
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 js-animate" data-animation-type="fadeInUp"
+                data-delay="0.1s">
+                Welcome to <span class="text-brand-purple">MindMile 2.0</span>
+            </h1>
+            <p class="text-lg md:text-xl text-gray-200 max-w-3xl mx-auto mb-10 js-animate"
+                data-animation-type="fadeInUp" data-delay="0.3s">
+                The ultimate user-driven quiz platform where you can create, manage, participate in quizzes, and climb
+                the leaderboards. Discover a new way to learn and compete!
+            </p>
+            <a href="#features"
+                class="inline-block bg-brand-purple text-white font-semibold py-3 px-8 rounded-lg text-lg hover:bg-brand-purple-dark transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 js-animate"
+                data-animation-type="fadeInUp" data-delay="0.5s">
+                Explore Quizzes
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Our Features Section -->
+        <section id="features" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-brand-gray-text text-center mb-16 js-animate"
+                    data-animation-type="fadeInUp">
+                    Our <span class="text-brand-purple">Features</span>
+                </h2>
+                <!-- Feature Block 1 -->
+                <div class="flex flex-col md:flex-row items-center mb-16 md:mb-24 js-animate"
+                    data-animation-type="fadeInRight" data-delay="0.2s">
+                    <div class="md:w-1/2 md:pr-12 mb-8 md:mb-0 js-animate" data-animation-type="fadeInUp"
+                        data-delay="0.4s">
+                        <h3 class="text-2xl font-semibold text-brand-gray-text mb-4">Interactive Dashboards &
+                            Leaderboards</h3>
+                        <p class="text-brand-gray-subtle leading-relaxed mb-3">Track your progress with detailed
+                            performance charts. View your scores, accuracy, and total tests attempted. Compete with
+                            others and see your rank on the dynamic leaderboard.</p>
+                        <ul class="list-disc list-inside text-brand-gray-subtle space-y-1">
+                            <li>Personalized user scores and rankings.</li>
+                            <li>View others' profiles and test history.</li>
+                            <li>User badges (Admin, Moderator, Verified).</li>
+                        </ul>
+                    </div>
+                    <div class="md:w-1/2 feature-card js-animate" data-animation-type="zoomIn" data-delay="0.6s">
+                        <div
+                            class="bg-gray-100 p-6 rounded-2xl shadow-xl aspect-video flex items-center justify-center text-brand-gray-subtle">
+                            <i class="fas fa-chart-line fa-5x text-brand-purple opacity-70"></i>
+                        </div>
+                    </div>
+                </div>
+                <!-- Feature Block 2 -->
+                <div class="flex flex-col md:flex-row-reverse items-center mb-16 md:mb-24 js-animate"
+                    data-animation-type="fadeInLeft" data-delay="0.2s">
+                    <div class="md:w-1/2 md:pl-12 mb-8 md:mb-0 js-animate" data-animation-type="fadeInUp"
+                        data-delay="0.4s">
+                        <h3 class="text-2xl font-semibold text-brand-gray-text mb-4">Seamless Test Creation & Management
+                        </h3>
+                        <p class="text-brand-gray-subtle leading-relaxed mb-3">Easily create your own quizzes with
+                            multiple-choice questions. Set timing, visibility (Public/Unlisted), and define answer
+                            visibility. Test creators even earn points for unique user attempts!</p>
+                        <ul class="list-disc list-inside text-brand-gray-subtle space-y-1">
+                            <li>Multiple-choice questions (single/multiple correct).</li>
+                            <li>Fixed start/end times or time-limited tests.</li>
+                            <li>Public and Unlisted visibility options.</li>
+                        </ul>
+                    </div>
+                    <div class="md:w-1/2 feature-card js-animate" data-animation-type="zoomIn" data-delay="0.6s">
+                        <div
+                            class="bg-gray-100 p-6 rounded-2xl shadow-xl aspect-video flex items-center justify-center text-brand-gray-subtle">
+                            <i class="fas fa-edit fa-5x text-brand-purple opacity-70"></i>
+                        </div>
+                    </div>
+                </div>
+                <!-- Feature Block 3 -->
+                <div class="flex flex-col md:flex-row items-center mb-16 md:mb-24 js-animate"
+                    data-animation-type="fadeInRight" data-delay="0.2s">
+                    <div class="md:w-1/2 md:pr-12 mb-8 md:mb-0 js-animate" data-animation-type="fadeInUp"
+                        data-delay="0.4s">
+                        <h3 class="text-2xl font-semibold text-brand-gray-text mb-4">Engaging Quiz Participation</h3>
+                        <p class="text-brand-gray-subtle leading-relaxed mb-3">Join tests via shared links or browse
+                            public quizzes. Experience countdown timers and take always-available quizzes. Our
+                            ML-powered system recommends quizzes based on your activity and interests.</p>
+                        <ul class="list-disc list-inside text-brand-gray-subtle space-y-1">
+                            <li>Join timed or always-available quizzes.</li>
+                            <li>Smart quiz recommendations.</li>
+                            <li>Search quizzes by topic.</li>
+                        </ul>
+                    </div>
+                    <div class="md:w-1/2 feature-card js-animate" data-animation-type="zoomIn" data-delay="0.6s">
+                        <div
+                            class="bg-gray-100 p-6 rounded-2xl shadow-xl aspect-video flex items-center justify-center text-brand-gray-subtle">
+                            <i class="fas fa-puzzle-piece fa-5x text-brand-purple opacity-70"></i>
+                        </div>
+                    </div>
+                </div>
+                <!-- Feature Block 4 -->
+                <div class="flex flex-col md:flex-row-reverse items-center js-animate" data-animation-type="fadeInLeft"
+                    data-delay="0.2s">
+                    <div class="md:w-1/2 md:pl-12 mb-8 md:mb-0 js-animate" data-animation-type="fadeInUp"
+                        data-delay="0.4s">
+                        <h3 class="text-2xl font-semibold text-brand-gray-text mb-4">Transparent Results & Fair
+                            Reporting</h3>
+                        <p class="text-brand-gray-subtle leading-relaxed mb-3">View detailed test scores and rankings
+                            instantly. Report incorrect questions or answers, and test creators can review and resolve
+                            issues, ensuring fairness and accuracy.</p>
+                        <ul class="list-disc list-inside text-brand-gray-subtle space-y-1">
+                            <li>Dynamic leaderboard updates.</li>
+                            <li>Question review and reporting system.</li>
+                            <li>Fair scoring adjustments for reported issues.</li>
+                        </ul>
+                    </div>
+                    <div class="md:w-1/2 feature-card js-animate" data-animation-type="zoomIn" data-delay="0.6s">
+                        <div
+                            class="bg-gray-100 p-6 rounded-2xl shadow-xl aspect-video flex items-center justify-center text-brand-gray-subtle">
+                            <i class="fas fa-flag-checkered fa-5x text-brand-purple opacity-70"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="py-16 md:py-24 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-brand-gray-text text-center mb-16 js-animate"
+                    data-animation-type="fadeInUp">
+                    Frequently Asked <span class="text-brand-purple">Questions</span>
+                </h2>
+                <div class="max-w-3xl mx-auto space-y-6">
+                    <details class="bg-white p-6 rounded-xl shadow-sm group cursor-pointer js-animate"
+                        data-animation-type="fadeInUp" data-delay="0.1s">
+                        <summary
+                            class="flex justify-between items-center font-semibold text-brand-gray-text group-hover:text-brand-purple">
+                            How is my score calculated?
+                            <i class="fas fa-chevron-down group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <p class="text-brand-gray-subtle mt-3 leading-relaxed">Your Test Participation Score (TPS) is
+                            calculated using the formula: `max((Correct Answers * Points per Correct) – (Incorrect
+                            Answers * Penalty per Incorrect), 0)`. Points per correct answer are capped at 4, and
+                            penalty points won't exceed points per correct.</p>
+                    </details>
+                    <details class="bg-white p-6 rounded-xl shadow-sm group cursor-pointer js-animate"
+                        data-animation-type="fadeInUp" data-delay="0.2s">
+                        <summary
+                            class="flex justify-between items-center font-semibold text-brand-gray-text group-hover:text-brand-purple">
+                            Can I create private quizzes?
+                            <i class="fas fa-chevron-down group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <p class="text-brand-gray-subtle mt-3 leading-relaxed">Yes! When creating a quiz, you can set
+                            its visibility to "Unlisted". Unlisted quizzes are accessible only via a direct link and
+                            won't appear in public searches or recommendations.</p>
+                    </details>
+                    <details class="bg-white p-6 rounded-xl shadow-sm group cursor-pointer js-animate"
+                        data-animation-type="fadeInUp" data-delay="0.3s">
+                        <summary
+                            class="flex justify-between items-center font-semibold text-brand-gray-text group-hover:text-brand-purple">
+                            What happens if I report an incorrect question?
+                            <i class="fas fa-chevron-down group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <p class="text-brand-gray-subtle mt-3 leading-relaxed">The test creator will review your report.
+                            If they agree, the question may be corrected, and scores for participants who chose the
+                            newly correct option will be adjusted. You might also receive bonus points for valid reports
+                            if you haven't contacted the creator beforehand.</p>
+                    </details>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer id="contact" class="py-16 js-animate" data-animation-type="fadeInUp">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
+                <div class="js-animate" data-animation-type="fadeInUp" data-delay="0.1s">
+                    <h5>MindMile 2.0</h5>
+                    <p class="text-sm">The future of interactive learning and competitive quizzing. Create, share, and
+                        challenge!</p>
+                </div>
+                <div class="js-animate" data-animation-type="fadeInUp" data-delay="0.2s">
+                    <h5>Explore</h5>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#">Browse Quizzes</a></li>
+                        <li><a href="#">Leaderboards</a></li>
+                        <li><a href="#">Create a Quiz</a></li>
+                    </ul>
+                </div>
+                <div class="js-animate" data-animation-type="fadeInUp" data-delay="0.3s">
+                    <h5>Support</h5>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="js-animate" data-animation-type="fadeInUp" data-delay="0.4s">
+                    <h5>Connect</h5>
+                    <div class="flex space-x-4 text-xl">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t pt-10 text-center text-sm js-animate text-gray-400" data-animation-type="fadeInUp"
+                data-delay="0.5s">
+                <p>© <span id="currentYear"></span> MindMile 2.0. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
