@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MindMile Leaderboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* --- Paste ALL CSS from Dashboard.html here --- */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        font-size: 16px;
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f8f9fe;
+        color: #34495e;
+        line-height: 1.6;
+        display: flex;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      ul {
+        list-style: none;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font-family: inherit;
+        font-size: inherit;
+        border-radius: 8px;
+        border: 1px solid #dfe4ea;
+      }
+
+      button {
+        cursor: pointer;
+        background-color: transparent;
+        padding: 8px 15px;
+        border: none;
+      }
+
+      /* ... (ALL OTHER CSS FROM Dashboard.html) ... */
+      .dashboard-container {
+        display: flex;
+        width: 100%;
+      }
+
+      .sidebar {
+        width: 260px;
+        background-color: #ffffff;
+        padding: 25px 15px;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid #e7eaf3;
+        flex-shrink: 0;
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 1000;
+        transition: width 0.3s ease, transform 0.3s ease, padding 0.3s ease;
+        overflow-y: auto;
+        box-shadow: 3px 0 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .main-content {
+        flex-grow: 1;
+        padding: 20px;
+        background-color: #f8f9fe;
+        margin-left: 260px;
+        transition: margin-left 0.3s ease;
+        width: calc(100% - 260px);
+        min-height: 100vh;
+      }
+
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 35px;
+        padding-left: 10px;
+        flex-shrink: 0;
+      }
+
+      .sidebar-logo {
+        background-color: #5d5fef;
+        color: white;
+        font-weight: bold;
+        padding: 9px 13px;
+        border-radius: 10px;
+        margin-right: 12px;
+        font-size: 1.25em;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: margin 0.3s ease;
+      }
+
+      .sidebar-title {
+        font-size: 1.5em;
+        font-weight: 600;
+        color: #5d5fef;
+        white-space: nowrap;
+        opacity: 1;
+        transition: opacity 0.2s ease;
+      }
+
+      .sidebar-menu {
+        flex-grow: 1;
+      }
+
+      .sidebar-menu .menu-heading {
+        display: block;
+        font-size: 0.75em;
+        color: #95a5a6;
+        text-transform: uppercase;
+        margin-top: 30px;
+        margin-bottom: 12px;
+        padding-left: 15px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+        opacity: 1;
+        transition: opacity 0.2s ease;
+      }
+
+      .sidebar-menu ul li a {
+        display: flex;
+        align-items: center;
+        padding: 13px 18px;
+        border-radius: 8px;
+        margin-bottom: 6px;
+        color: #5f6774;
+        font-weight: 500;
+        transition: background-color 0.2s ease, color 0.2s ease,
+          padding 0.3s ease;
+        font-size: 0.95em;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      .sidebar-menu ul li a i {
+        margin-right: 16px;
+        width: 20px;
+        text-align: center;
+        color: #8a94a6;
+        font-size: 1.1em;
+        transition: color 0.2s ease, margin 0.3s ease;
+        flex-shrink: 0;
+      }
+
+      .sidebar-menu ul li a span {
+        opacity: 1;
+        transition: opacity 0.2s ease;
+      }
+
+      .sidebar-menu ul li a:hover,
+      .sidebar-menu ul li a.active {
+        background-color: #f4f4ff;
+        color: #5d5fef;
+      }
+
+      .sidebar-menu ul li a:hover i,
+      .sidebar-menu ul li a.active i {
+        color: #5d5fef;
+      }
+
+      .sidebar-menu ul li a.active {
+        font-weight: 600;
+      }
+
+      .main-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        gap: 15px;
+      }
+
+      .main-header .greeting {
+        flex-grow: 1;
+        flex-basis: 200px;
+        text-align: left;
+      }
+
+      .main-header .greeting h1 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #2c3e50;
+        line-height: 1.3;
+      }
+
+      .main-header .header-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 15px;
+        flex-grow: 1;
+        flex-basis: 300px;
+      }
+
+      .create-test-btn {
+        background-color: #5d5fef;
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: background-color 0.2s ease, box-shadow 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 10px rgba(93, 95, 239, 0.2);
+        white-space: nowrap;
+      }
+
+      .create-test-btn i {
+        font-size: 0.9em;
+        margin-right: 5px;
+      }
+
+      .create-test-btn:hover {
+        background-color: #4a4cc7;
+        box-shadow: 0 6px 12px rgba(93, 95, 239, 0.3);
+      }
+
+      .search-bar {
+        position: relative;
+        flex-grow: 1;
+        min-width: 200px;
+        max-width: 400px;
+      }
+
+      .search-bar input {
+        padding: 10px 15px 10px 40px;
+        border-radius: 8px;
+        border: 1px solid #dfe4ea;
+        width: 100%;
+        font-size: 0.9rem;
+        background-color: #fff;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .search-bar i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #adb5bd;
+        font-size: 0.9em;
+        pointer-events: none;
+      }
+
+      .profile-container {
+        position: relative;
+        flex-shrink: 0;
+      }
+
+      .user-avatar img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        cursor: pointer;
+        border: 2px solid #e7eaf3;
+        transition: border-color 0.2s ease;
+        display: block;
+      }
+
+      .profile-container:hover .user-avatar img {
+        border-color: #5d5fef;
+      }
+
+      .profile-dropdown {
+        position: absolute;
+        top: calc(100% + 12px);
+        right: 0;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.12);
+        padding: 8px 0;
+        width: 190px;
+        z-index: 100;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(8px);
+        transition: opacity 0.25s ease, visibility 0.25s ease,
+          transform 0.25s ease;
+      }
+
+      .profile-container:hover .profile-dropdown {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .profile-dropdown::before {
+        content: "";
+        position: absolute;
+        top: -8px;
+        right: 15px;
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-bottom: 8px solid #ffffff;
+        filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.03));
+      }
+
+      .profile-dropdown ul li a {
+        display: flex;
+        align-items: center;
+        padding: 10px 18px;
+        font-size: 0.9rem;
+        color: #495057;
+        transition: background-color 0.2s ease, color 0.2s ease;
+      }
+
+      .profile-dropdown ul li a i {
+        margin-right: 12px;
+        width: 18px;
+        text-align: center;
+        color: #8a94a6;
+        font-size: 1rem;
+        transition: color 0.2s ease;
+      }
+
+      .profile-dropdown ul li a:hover {
+        background-color: #f4f4ff;
+        color: #5d5fef;
+      }
+
+      .profile-dropdown ul li a:hover i {
+        color: #5d5fef;
+      }
+
+      /* --- Responsive Design from Dashboard.html (abbreviated for brevity in this example) --- */
+      @media (min-width: 576px) {
+        .main-content {
+          padding: 25px;
+        }
+        /* ... other responsive styles ... */
+      }
+      @media (min-width: 768px) {
+        .main-content {
+          padding: 30px;
+        }
+        /* ... other responsive styles ... */
+      }
+      @media (min-width: 992px) {
+        /* ... */
+      }
+      @media (min-width: 1200px) {
+        /* ... */
+      }
+      @media (max-width: 991.98px) {
+        .sidebar {
+          width: 80px;
+          padding: 25px 10px;
+        }
+        .main-content {
+          margin-left: 80px;
+          width: calc(100% - 80px);
+        }
+        .sidebar-title,
+        .sidebar-menu .menu-heading,
+        .sidebar-menu ul li a span {
+          opacity: 0;
+          pointer-events: none;
+          width: 0;
+        }
+        .sidebar-header {
+          justify-content: center;
+          padding-left: 0;
+        }
+        .sidebar-logo {
+          margin-right: 0;
+        }
+        .sidebar-menu ul li a {
+          justify-content: center;
+          padding: 15px 10px;
+        }
+        .sidebar-menu ul li a i {
+          margin-right: 0;
+          font-size: 1.3em;
+        }
+      }
+      @media (max-width: 767.98px) {
+        /* ... */
+      }
+      @media (max-width: 575.98px) {
+        /* ... */
+      }
+      /* --- End of copied Dashboard CSS --- */
+
+      /* --- Leaderboard Specific Styles --- */
+      .leaderboard-header-content {
+        text-align: center;
+        margin-bottom: 35px; /* Increased margin */
+        padding: 20px;
+        background-color: #fff; /* White background for header card */
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e7eaf3;
+      }
+
+      .leaderboard-trophy-icon img {
+        width: 72px;
+        height: 72px;
+        margin-bottom: 15px;
+      }
+
+      .leaderboard-header-content h1 {
+        font-size: 2rem; /* Matches dashboard h1 */
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 10px;
+      }
+
+      .leaderboard-header-content p {
+        font-size: 0.95rem;
+        color: #5f6774;
+        max-width: 700px; /* Wider text */
+        margin: 0 auto;
+        line-height: 1.7; /* Slightly more line height */
+      }
+
+      .leaderboard-list-container {
+        background-color: #fff;
+        border: 1px solid #dfe4ea;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+
+      .leaderboard-list-header {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 20px;
+        border-bottom: 1px solid #dfe4ea;
+        font-weight: 600;
+        font-size: 0.8rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background-color: #f8f9fe; /* Light background for header */
+      }
+
+      .leaderboard-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        max-height: 60vh; /* Adjust as needed, relative to viewport */
+        overflow-y: auto;
+      }
+
+      .leaderboard-list-item {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        border-bottom: 1px solid #f0f2f5;
+        background-color: #fff;
+        transition: background-color 0.2s ease;
+        min-height: 60px; /* Ensure consistent height */
+      }
+
+      .leaderboard-list li:last-child .leaderboard-list-item {
+        border-bottom: none;
+      }
+
+      .leaderboard-list-item:hover:not(.rank-1):not(.rank-2):not(.rank-3) {
+        background-color: #f4f6f8;
+      }
+
+      .leaderboard-list-item .rank-col,
+      .leaderboard-list-header .rank-col {
+        flex-basis: 80px;
+        flex-shrink: 0;
+        text-align: center;
+        font-weight: 500;
+        font-size: 0.95rem; /* Slightly larger rank number */
+      }
+      .leaderboard-list-header .rank-col {
+        font-size: 0.8rem; /* Header font size */
+      }
+
+      .leaderboard-list-item .name-col,
+      .leaderboard-list-header .name-col {
+        flex-grow: 1;
+        padding: 0 15px;
+        font-weight: 500;
+        color: #34495e;
+        font-size: 0.95rem;
+      }
+      .leaderboard-list-header .name-col {
+        color: #6c757d;
+        font-size: 0.8rem; /* Header font size */
+      }
+
+      .leaderboard-list-item .progress-col,
+      .leaderboard-list-header .progress-col {
+        flex-basis: 100px;
+        flex-shrink: 0;
+        text-align: center;
+      }
+
+      .leaderboard-list-item .progress-col .fa-flag-checkered {
+        font-size: 1.6em; /* Made flags slightly larger */
+        color: #5d5fef;
+      }
+      /* For the sparkle effect on the flag, you'd typically use an SVG or an image.
+           A pseudo-element can fake it a bit, but it's not perfect.
+           Example for a pseudo-element star (very basic):
+        .leaderboard-list-item .progress-col .fa-flag-checkered {
+            position: relative;
+        }
+        .leaderboard-list-item .progress-col .fa-flag-checkered::after {
+            content: "\f005"; 
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            top: -5px;
+            right: -8px;
+            font-size: 0.5em;
+            color: #FFD700; 
+            opacity: 0.8;
+        } */
+
+      .medal-icon {
+        width: 38px; /* Slightly larger medals */
+        height: auto;
+        vertical-align: middle;
+      }
+
+      .leaderboard-list-item.rank-1 {
+        border: 2px solid #ffd700; /* Gold */
+        background-color: #fff; /* White background for rank 1 as per image */
+        padding: 13px 18px; /* Adjust padding: 15px - 2px border */
+        /* No specific border-radius needed, fits within container */
+      }
+
+      .leaderboard-list-item.rank-2,
+      .leaderboard-list-item.rank-3 {
+        background-color: #f8f9fa; /* Light grey for 2nd and 3rd */
+      }
+
+      .leaderboard-list::-webkit-scrollbar {
+        width: 8px;
+      }
+      .leaderboard-list::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+      .leaderboard-list::-webkit-scrollbar-thumb {
+        background-color: #c1c1c1;
+        border-radius: 10px;
+        border: 2px solid #f1f1f1;
+      }
+      .leaderboard-list::-webkit-scrollbar-thumb:hover {
+        background-color: #a8a8a8;
+      }
+
+      @media (max-width: 767px) {
+        .leaderboard-header-content {
+          padding: 15px;
+          margin-bottom: 25px;
+        }
+        .leaderboard-header-content h1 {
+          font-size: 1.7rem;
+        }
+        .leaderboard-header-content p {
+          font-size: 0.9rem;
+        }
+        .leaderboard-list-header {
+          padding: 10px 15px;
+          font-size: 0.75rem;
+        }
+        .leaderboard-list-item {
+          padding: 12px 15px;
+          min-height: 55px;
+        }
+        .leaderboard-list-item .rank-col,
+        .leaderboard-list-header .rank-col {
+          flex-basis: 60px;
+          font-size: 0.9rem;
+        }
+        .leaderboard-list-item .name-col,
+        .leaderboard-list-header .name-col {
+          padding: 0 10px;
+          font-size: 0.9rem;
+        }
+        .leaderboard-list-header .rank-col,
+        .leaderboard-list-header .name-col {
+          font-size: 0.75rem;
+        }
+        .leaderboard-list-item .progress-col,
+        .leaderboard-list-header .progress-col {
+          flex-basis: 80px;
+        }
+        .leaderboard-list-item .progress-col .fa-flag-checkered {
+          font-size: 1.4em;
+        }
+        .medal-icon {
+          width: 32px;
+        }
+        .leaderboard-list-item.rank-1 {
+          padding: 10px 13px; /* 12px - 2px border */
+        }
+      }
+
+      @media (max-width: 575px) {
+        .leaderboard-header-content {
+          margin-bottom: 20px;
+        }
+        .leaderboard-header-content h1 {
+          font-size: 1.5rem;
+        }
+        .leaderboard-list-header {
+          font-size: 0.7rem;
+          padding: 8px 10px;
+        }
+        .leaderboard-list-item {
+          padding: 10px;
+          font-size: 0.85rem;
+          min-height: 50px;
+        }
+        .leaderboard-list-item .rank-col,
+        .leaderboard-list-header .rank-col {
+          flex-basis: 50px;
+          font-size: 0.85rem;
+        }
+        .leaderboard-list-item .name-col,
+        .leaderboard-list-header .name-col {
+          padding: 0 8px;
+          font-size: 0.85rem;
+        }
+        .leaderboard-list-header .rank-col,
+        .leaderboard-list-header .name-col {
+          font-size: 0.7rem;
+        }
+        .leaderboard-list-item .progress-col,
+        .leaderboard-list-header .progress-col {
+          flex-basis: 70px;
+        }
+        .leaderboard-list-item .progress-col .fa-flag-checkered {
+          font-size: 1.3em;
+        }
+        .medal-icon {
+          width: 28px;
+        }
+        .leaderboard-list-item.rank-1 {
+          padding: 8px 8px; /* 10px - 2px border */
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-logo">M</span>
+        <span class="sidebar-title">MindMile</span>
+      </div>
+      <div class="sidebar-menu">
+        <span class="menu-heading">ACCOUNT</span>
+        <ul>
+          <li>
+            <a href="./Dashboard.html"
+              ><i class="fas fa-home-alt"></i> <span>Dashboard</span></a
+            >
+          </li>
+          <li>
+            <a href="./TestPage.html"
+              ><i class="fas fa-pencil-alt"></i> <span>My Tests</span></a
+            >
+          </li>
+          <li>
+            <a href="./home.html"
+              ><i class="fas fa-search"></i> <span>Home</span></a
+            >
+          </li>
+          <li>
+            <a href="./Leaderboard.html" class="active"
+              ><i class="fas fa-trophy"></i> <span>Leaderboard</span></a
+            >
+          </li>
+        </ul>
+        <span class="menu-heading">SUPPORT</span>
+        <ul>
+          <li>
+            <a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a>
+          </li>
+          <li>
+            <a href="./contact.html"
+              ><i class="fa-solid fa-address-book"></i>
+              <span>Contact Us</span></a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="dashboard-container">
+      <main class="main-content">
+        <header class="main-header">
+          <div class="greeting">
+            <h1>Leaderboard</h1>
+            <!-- Changed title for this page -->
+          </div>
+          <div class="header-actions">
+            <!-- Removed Create Test Button for leaderboard page, can be added back if needed -->
+            <!-- <button class="create-test-btn" id="createTestBtnTrigger">
+                        <i class="fas fa-plus"></i> Create New Test
+                    </button> -->
+            <div class="search-bar">
+              <i class="fas fa-search"></i>
+              <input type="text" placeholder="Search users or topics..." />
+            </div>
+            <div class="profile-container">
+              <div class="user-avatar">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/147/147144.png"
+                  alt="User Avatar"
+                />
+              </div>
+              <div class="profile-dropdown">
+                <ul>
+                  <li>
+                    <a href="#" class="dropdown-item"
+                      ><i class="fas fa-user-circle"></i>
+                      <span>Profile</span></a
+                    >
+                  </li>
+                  <li>
+                    <a href="#" class="dropdown-item"
+                      ><i class="fas fa-cog"></i> <span>Settings</span></a
+                    >
+                  </li>
+                  <li>
+                    <a href="#" class="dropdown-item"
+                      ><i class="fas fa-sign-out-alt"></i>
+                      <span>Log out</span></a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Leaderboard Content Start -->
+        <section class="leaderboard-content-area">
+          <div class="leaderboard-header-content">
+            <div class="leaderboard-trophy-icon">
+              <!-- SVG from the provided image -->
+              <img
+                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzYiIGN5PSIzNiIgcj0iMzYiIGZpbGw9IiNGRkVCMDAiIGZpbGwtb3BhY2l0eT0iMC4xIi8+CjxwYXRoIGQ9Ik00NS42NjY3IDMyLjE2NjdINDQuNzMzM0M0NC43MzMzIDMwLjkyMSA0NC4xMTQzIDI5Ljc0MzQgNDIuOTk1MyAyOC44NjU4QzQxLjg3NjIgMjcuOTg4MyA0MC4zNDMgMjcuNSAzOC43NSA5QzM4Ljc1IDI3LjUwODYgMzguNzUgMjUuMzMzMyAzOC43NSAyNS4zMzMzQzM4Ljc1IDI0LjUwNDMgMzguMzMyIDIzLjcwNTMgMzcuNTk5OSAyMy4xMTY1QzM2Ljg2NzggMjIuNTI3NyAzNS44OTY0IDIyLjIwODMgMzQuODgzMyAyMi4yMDgzSDMwLjEyNUMyOS4wMTE5IDIyLjIwODMgMjguMDQwNSAyMi41Mjc3IDI3LjMwMjQgMjMuMTE2NUMyNi41NzA0IDIzLjcwNTMgMjYuMTY2NyAyNC41MDQzIDI2LjE2NjcgMjUuMzMzM1MyMC41IDMyLjE2NjcgMzAuNSAzMi4xNjY3SDI5LjU4MzNDMjkuNTgzMyAzMC45MjEgMjguOTY0MyAyOS43NDM0IDI3Ljg0NTIgMjguODY1OEMyNi43MjYxIDI3Ljk4ODMgMjUuMTkzMyAyNy41IDI0IDI3LjVWMzQuNUgyMS43NUMyMS4wMDQ0IDM0LjEgMjEuMzU4MyAzNS4xNDU4IDIxLjM1ODMgMzUuNDk1OFY0MC40MjA4QzIxLjM1ODMgNDIuNDI5MiAyMi4xMDQyIDQ0LjMzNzUgMjMuNjA0MiA0NS44Mzc1QzI1LjEwNDIgNDcuMzM3NSAyNy4yMzMzIDQ4LjA4MzMgMjkuNDE2NyA0OC4wODMzSDM3LjQxNjdDNDAuMTY2NyA0OC4wODMzIDQxLjgzMzMgNDYuNzUgNDEuODMzMyA0NC4xNjY3VjM1LjVINDQuMjVWMjcuNUM0NS41Mzk2IDI3LjUwODYgNDUuNjY2NyAyOS42MjUgNDUuNjY2NyAzMi4xNjY3WiIgZmlsbD0iI0ZGQzEwNyIvPgo8cGF0aCBkPSJNMzguNzUgMjIuMjA4M0MzOC43NSAyMC43MTE3IDM5Ljk0NSAxOS41MTY3IDQxLjQ0MTcgMTkuNTE2N0M0Mi45Mzg0IDE5LjUxNjcgNDQuMTMzMyAyMC43MTE3IDQ0LjEzMzMgMjIuMjA4M0M0NC4xMzMzIDIzLjcwNSAzOS45NDUgMjQuOTA4MyA0MS40NDE3IDI0LjkwODNDNDIuOTM4NCAyNC45MDgzIDM4Ljc1IDIyLjcwNSAzOC43NSAyMi4yMDgzWiIgZmlsbD0iI0ZGM0MyNiIvPgo8cGF0aCBkPSJNMzQuODgzMyAyMi4yMDgzQzM0Ljg4MzMgMjAuNzExNyAzMy42ODgzIDE5LjUxNjcgMzIuMTkxNyAxOS41MTY3QzMwLjY5NSAxOS41MTY3IDI5LjUgMjAuNzExNyAyOS41IDIyLjIwODNDMjkuNSAyMy43MDUgMzMuNjg4MyAyNC45MDgzIDMyLjE5MTcgMjQuOTA4M0MzMC42OTUgMjQuOTA4MyAzNC44ODMzIDIyLjcwNSAzNC44ODMzIDIyLjIwODNaIiBmaWxsPSIjRkYzQzM2Ii8+CjxwYXRoIGQ9Ik0zMi4yMDgzIDI5LjEyNUgzNC43MDgzVjMyLjQxNjdIMzIuMjA4M1YyOS4xMjVaIiBmaWxsPSIjNDFCNkU4Ii8+CjxwYXRoIGQ9Ik0zMS41IDQ5Ljg3NUgzNS4zMzMzVjUxLjYzMzNIMzEuNVY0OS44NzVaIiBmaWxsPSIjRkZDNTAwIi8+CjxwYXRoIGQ9Ik0zMS41IDUxLjYzMzNIMzUuMzMzM1Y1My4zOTI3SDMxLjVWNTEuNjMzM1oiIGZpbGw9IiNGRkM1MDAiLz4KPHBhdGggZD0iTTM4Ljc1IDMzLjY2NjdDMzguNzUgMzQuMTI2OSAzOC45Mzg3IDM0LjU2NzcgMzkuMjY3NiAzNC44OTY2QzM5LjU5NjUgMzUuMjI1NSAzMC4wMzczIDM1LjQwODMgMzAuNSAzNS40MDgzQzM0Ljk2MjcgMzUuNDA4MyAzNS40MDM1IDM1LjIyNTUgMzUuNzMyNCAzNC44OTY2QzM2LjA2MTMgMzQuNTY3NyAzMS4yNSA4Ny4xMjY5IDMxLjI1IDMzLjY2NjciIGZpbGw9IiNGRkU1OEMiLz4KPHBhdGggZD0iTTI5LjUgMzMuNjY2N0MyOS41IDM0LjEyNjkgMjkuNjYxMyAzNC41Njc3IDI5Ljk5MDIgMzQuODk2NkMzMC4zMTkgMzUuMjI1NSAzMC43NTk4IDM1LjQwODMgMzEuMjUgMzUuNDA4M0MzMS43NDA3IDM1LjQwODMgMzIuMTgwNSAzNS4yMjU1IDMyLjUxOTQgMzQuODk2NkMzMi44NDgzIDM0LjU2NzcgMzMuMDgzMyAzNC4xMjY5IDMzLjA4MzMgMzMuNjY2NyIgZmlsbD0iI0ZGRTU4QyIvPgo8cGF0aCBkPSJNNDcuNzgzMyAzNi41QzQ4LjAyMDggMzUuNzY2NyA0OC4wMjA4IDM0Ljc5MTcgNDcuMzUgMzQuMTA4M0M0Ni42NzkyIDMzLjQyNSA0NS43MDQyIDMzLjQyNSA0NC45NzUgMzQuMTA4M0w0Mi45NSA5QzQyLjYyOTEgMzYuNTQxNyA0Mi45NSA5LjQyNSA0My4zNTQyIDM3LjczMzNDNDMuNzU4MyAzOC4wNDE3IDQ0LjM3MDggMzguMDEyNSA0NC44MjA4IDM3LjU2MjVDNDUuMjcwOCAzNy4xMTI1IDQ1LjM5NTggMzYuNDAwOSA0NC45NzUgMzUuNDk1OEw0Ny43ODMzIDM2LjVaIiBmaWxsPSIjRkYzQzM2Ii8+CjxwYXRoIGQ9Ik0yNC4wMDQyIDM1LjQ5NThDMjMuNTg3NSAzNi40MDA5IDIzLjQ2MjUgMzcuMTEyNSAyMy45MTI1IDM3LjU2MjVDMjQuMzYyNSAzOC4wMTI1IDI0Ljk3NSA5LjAyOTEgMjUuMzc5MiAzNy43MzMzQzI1Ljc4MzMgMzcuNDI1IDI2LjExNjcgMzYuNTQxNyAyNS43ODMzIDM2LjA3NUwyMy44MTI1IDM0LjEwODNDMjMuMDg3NSAzMy40MjUgMjIuMTExNyAzMy40MjUgMjEuNDQxNyAzNC4xMDgzQzIwLjc3MTcgMzQuNzkxNyAyMC43NzE3IDM1LjY2NjcgMjEuNDQxNyAzNi41TDI0LjAwNDIgMzUuNDk1OFoiIGZpbGw9IiNGRjNDMzYiLz4KPHBhdGggZD0iTTQwLjQ1ODMgMjYuODEyNUMzOS45NzUgMjYuMzI5MiAzOS4xNTg0IDI2LjMyOTIgMzguNjc1IDI2LjgxMjVDMzguMTkxNyAyNy4yOTU4IDM4LjE5MTcgMjguMTEyNSAzOC42NzUgMjguNTk1OEw0MC43IDMwLjg3NUM0MS4wMjA4IDMxLjIwODMgNDEuNjQxNyAzMS4yMDgzIDQxLjk3NSAzMC44NzVDNDIuMzA4MyAzMC41NDE3IDQyLjMwODMgMjkuOTA4MyA0MS45NzUgMjkuNTc1VjI4LjU5NThMNDAuNDU4MyAyNi44MTI1WiIgZmlsbD0iI0ZGM0MyNiIvPgo8cGF0aCBkPSJNMzIuNjY2NyAyNy41QzMyLjY2NjcgMjcuNzQyNyAzMi41NzAzIDI3Ljk3NTEgMzIuNDA4OSAyOC4xNDY0QzMyLjI0NzYgMjguMzE3OCAzMi4wMTM5IDI4LjQxMjUgMzEuNzcxNyAyOC40MTI1SDI4LjY2NjdDMjcuNTYyNSAyOC40MTI1IDI2LjY1NTIgMjQuODUgMjguOTk1OCAyMy4yODMzQzI5LjE4ODIgMjMuMDgyNyAyOS40NTg3IDMyLjEzNzMgMjkuNzU4MyAzMi4xNzVDMzAuMDU3OCAzMi4yMTI2IDMwLjMyMjggMzAuOTk5MiAzMC41MDQyIDMwLjc1QzMwLjYyNSAyOS43MDgzIDMwLjg4MzMgMjcuODYzNSAzMi42NjY3IDI3LjVaIiBmaWxsPSIjRkZDODIzIi8+CjxwYXRoIGQ9Ik00NC42NjY3IDI1LjMzMzNDNDQuMzI5MiAyNC40NSA0My41MjA4IDIzLjY0MTcgNDIuNjMzMyAyMy4zMDQyQzQxLjc0NTggMjIuOTY2NyA0MC43NTA4IDIzLjE5MTcgNDAuMDgyMyAyMy44MjkxTDQxLjgyOTEgMjMuODc1QzQyLjUyOTEgMjMuODc1IDQzLjE0NTggMjQuMTI1IDQzLjU0MTcgMjQuNTIxN0M0My45Mzc1IDI0LjkyODMgNDQuMTg3NSAyNS40ODc1IDQ0LjE4NzUgMjYuMDcxN0M0NC4xODc1IDI2LjY1NTggNDMuOTM3NSAyNy4yMTUgNDMuNTQxNyAyNy42MTY3QzQzLjE0NTggMjguMDE4MyA0Mi41MjkyIDI4LjI2ODMgNDEuOTQ1OCAyOC4yNjgzQzQxLjM2MjUgMjguMjY4MyA0MC44MDQyIDI4LjAxODMgNDAuNDA4MyAyNy42MTY3QzQwLjAxMjUgMjcuMjE1IDM5Ljc2MjUgMjYuNjU1OCAzOS43NjI1IDI2LjA3MTdWMjYuMTg3NUw0NC42NjY3IDI1LjMzMzNaIiBmaWxsPSIjRkZDMTA3Ii8+CjxwYXRoIGQ9Ik0yNi4yNDU4IDIzLjgyOTFDMjUuNTM3NSAyMy4xOTE3IDI0LjYwNDIgMjIuOTY2NyAyMy43MTY3IDIzLjMwNDJDMjIuODI5MiAyMy42NDE3IDIyLjAyMDggMjQuNDUgMjEuNjk1OCAyNS4zMzMzTDI0LjQxNjcgMjYuMTg3NVYyNi4wNzE3QzI0LjQxNjcgMjUuNDg3NSAyNC42NjY3IDI0LjkyODMgMjUuMDYyNSAyNC41MjE3QzI1LjQ1ODMgMjQuMTI1IDI2LjA4MzMgMjMuODc1IDI2LjY2NjcgMjMuODc1QzI3LjI1IDIuMTg3NSAyNy44MTI1IDI0LjEyNSAyOC4yMDgzIDI0LjUyMTdDMjguNjA0MiAyNC45MjgxIDI4Ljg1NDIgMjUuNDg3NSAyOC44NTQyIDI2LjA3MTdDMjguODU0MiAyNi42NTU4IDI4LjYwNDIgMjcuMjE1IDI4LjIwODMgMjcuNjE2N0MyNy44MTI1IDI4LjAxODMgMjcuMjUgMjguMjY4MyAyNi42NjY3IDI4LjI2ODNDMjYuMDgzMyAyOC4yNjgzIDI1LjQ1ODMgMjguMDE4MyAyNS4wNjI1IDI3LjYxNjdDMjQuNjY2NyAyNy4yMTUgMjQuNDE2NyAyNi42NTU4IDI0LjQxNjcgMjYuMDcxN0wyNi4yNDU4IDIzLjgyOTFaIiBmaWxsPSIjRkZDMTA3Ii8+Cjwvc3ZnPgo="
+                alt="Trophy Icon"
+              />
+            </div>
+            <h1>Leaderboard</h1>
+            <p>
+              Race to win 1 of 100 Google and Udacity scholarships for the
+              Android Developer Nanodegree program. Track your pace, keep up
+              with your fellow learners, and have a blast!
+            </p>
+          </div>
+
+          <div class="leaderboard-list-container">
+            <div class="leaderboard-list-header">
+              <span class="rank-col">RANK</span>
+              <span class="name-col">NAME</span>
+              <span class="name-col">Score</span>
+              <span class="progress-col">PROGRESS</span>
+            </div>
+            <ul class="leaderboard-list">
+              <li>
+                <!-- Wrap each item in an LI for proper :last-child and :first-child selectors -->
+                <div class="leaderboard-list-item rank-1">
+                  <span class="rank-col">
+                    <img
+                      src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDMiIGhlaWdodD0iNDMiIHZpZXdCb3g9IjAgMCA0MyA0MyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjEuNSIgY3k9IjIxLjUiIHI9IjIxLjUiIGZpbGw9IiNGRkRBNjYiLz4KPHBhdGggZD0iTTIxLjUgOC45NTgzM0MyMS41IDguOTU4MzMgMjAuMDQxNyAxMy45MTY3IDE3Ljc5MTcgMTMuOTE2N0MxNS41NDE3IDEzLjkxNjcgMTMuNzUgMTMuNzUgMTMuNzUgMTMuNzVDMTMuNzUgMTMuNzUgMTEuNzUgMTcuMDgzMyAxNC4wNDE3IDE4LjQ1ODM0QzE2LjMzMzMgMTkuODMzMyAxNS4wNDE3IDIwLjg3NSAxNS4wNDE3IDIyLjI1QzE1LjA0MTcgMjMuNjI1IDE2LjE2NjcgMjQuMzc1IDE4LjI5MTcgMjUuMTI1QzIwLjQxNjcgMjUuODc1IDIxLjUgMjYuNjI1IDIxLjUgMjguMzc1QzIxLjUgMzAuMTI1IDIyLjU4MzMgMjUuODc1IDI0LjcwODMgMjUuMTI1QzI2LjgyNSAyNC4zNzUgMjcuOTU4MyAyMy42MjUgMjcuOTU4MyAyMi4yNUMyNy45NTgzIDIwLjg3NSAyNi42NjY3IDE5LjgzMzMgMjguOTU4MyAxOC40NTgzQzMxLjI1IDE3LjA4MzMgMjkuMjUgMTMuNzUgMjkuMjUgMTMuNzVDMjkuMjUgMTMuNzUgMjcuNDU4MyAxMy45MTY3IDI1LjIwODMgMTMuOTE2N0MyMi45NTgzIDEzLjkxNjcgMjEuNSA4Ljk1ODMzIDIxLjUgOC45NTgzM1oiIGZpbGw9IiNGRkM0MUUiLz4KPHBhdGggZD0iTTIxLjUgOC45NTgzM0MyMC42MjUgOC4wODMzMyAxOS41NDE3IDguMDQxMzMgMTguNTgzMyA4LjY2NjY2TDE3Ljc5MTcgMTMuOTE2N0MyMC4wNDE3IDEzLjkxNjcgMjEuNSA4Ljk1ODMzIDIxLjUgOC45NTgzM1oiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuNSIvPgo8cGF0aCBkPSJNMjEuNSAyOC4zNzVDMjIuNjI1IDMwLjEyNSAyNC43MDgzIDI1LjEyNSAyNS4yMDgzIDI1LjEyNUMyNS41ODMzIDI1LjEyNSAyNS44NzUgMjUgMjYuMDQxNyAyNC43OTE3QzI2Ljc1IDI0LjA0MTcgMjcuMTI1IDIzLjA1IDI3LjEyNSAyMi4yNUMyNy4xMjUgMjEuNDUgMjYuNzUgMjAuNjU4MyAyNi4wNDE3IDE5LjkyNjVDMjUuMzMzMyAxOS4xNzY5IDI0LjMzMzMgMTguOTY4MyAyMy41ODMzIDE5LjE3NjlDMjIuODMzMyAxOS4zODU0IDIxLjk1ODMgMTkuODM3OSAyMS4xMjUgMTkuODM3OUMyMC4yOTE3IDE5LjgzNzkgMTkuNDE2NyAxOS4zODU0IDE4LjY2NjcgMTkuMTc2OUMxNy45MTY3IDE4Ljk2ODMgMTYuOTE2NyAxOS4xNzY5IDE2LjIwODMgMTkuOTI2NUMxNS41IDE5LjY2NzkgMTUuMTI1IDIwLjQ1ODMgMTUuMTI1IDIxLjI1QzE1LjEyNSAyMi4wNTgzIDE1LjUgMjIuODQ1OCAxNi4yMDgzIDIzLjU5MTdDMTYuOTE2NyAyNC4zMzc5IDE5LjkyNSAyNC43OTE3IDIwLjA0MTcgMjQuNzkxN0MyMC4xNjY3IDI0Ljc5MTcgMjAuMjkxNyAyNC44MzMzIDIwLjQxNjcgMjQuODc1QzIwLjg3NSAyNS4wNDEzIDIxLjE2NjcgMjUuMzc1IDIxLjM3NSAyNS44MzMzQzIxLjYyNSAyNi41NDEzIDIxLjUgMjguMzc1IDIxLjUgMjguMzc1WiIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC40Ii8+CjxwYXRoIGQ9Ik0xOC41ODMzIDMxLjQxNjdIMjQuNDE2N1YyOS4xNjY3SDE4LjU4MzNWMzEuNDE2N1oiIGZpbGw9IiNGRkUyQjUiLz4KPHBhdGggZD0iTTE5Ljg3NSAzMy41SDIzLjEyNVYzMS4yNUgxOS44NzVWMzMuNVoiIGZpbGw9IiNGRkVCOUIiLz4KPC9zdmc+Cg=="
+                      alt="Gold Medal"
+                      class="medal-icon"
+                    />
+                  </span>
+                  <span class="name-col">Steven A</span>
+                  <span class="name-col">220223</span>
+                  <span class="progress-col"
+                    ><i class="fas fa-flag-checkered"></i
+                  ></span>
+                </div>
+              </li>
+              <li>
+                <div class="leaderboard-list-item rank-2">
+                  <span class="rank-col">
+                    <img
+                      src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDMiIGhlaWdodD0iNDMiIHZpZXdCb3g9IjAgMCA0MyA0MyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjEuNSIgY3k9IjIxLjUiIHI9IjIxLjUiIGZpbGw9IiNDNkQyRDUiLz4KPHBhdGggZD0iTTIxLjUgOC45NTgzM0MyMS41IDguOTU4MzMgMjAuMDQxNyAxMy45MTY3IDE3Ljc5MTcgMTMuOTE2N0MxNS41NDE3IDEzLjkxNjcgMTMuNzUgMTMuNzUgMTMuNzUgMTMuNzVDMTMuNzUgMTMuNzUgMTEuNzUgMTcuMDgzMyAxNC4wNDE3IDE4LjQ1ODM0QzE2LjMzMzMgMTkuODMzMyAxNS4wNDE3IDIwLjg3NSAxNS4wNDE3IDIyLjI1QzE1LjA0MTcgMjMuNjI1IDE2LjE2NjcgMjQuMzc1IDE4LjI5MTcgMjUuMTI1QzIwLjQxNjcgMjUuODc1IDIxLjUgMjYuNjI1IDIxLjUgMjguMzc1QzIxLjUgMzAuMTI1IDIyLjU4MzMgMjUuODc1IDI0LjcwODMgMjUuMTI1QzI2LjgyNSAyNC4zNzUgMjcuOTU4MyAyMy42MjUgMjcuOTU4MyAyMi4yNUMyNy45NTgzIDIwLjg3NSAyNi42NjY3IDE5LjgzMzMgMjguOTU4MyAxOC40NTgzQzMxLjI1IDE3LjA4MzMgMjkuMjUgMTMuNzUgMjkuMjUgMTMuNzVDMjkuMjUgMTMuNzUgMjcuNDU4MyAxMy45MTY3IDI1LjIwODMgMTMuOTE2N0MyMi45NTgzIDEzLjkxNjcgMjEuNSA4Ljk1ODMzIDIxLjUgOC45NTgzM1oiIGZpbGw9IiM5RUFDQUYiLz4KPHBhdGggZD0iTTIxLjUgOC45NTgzM0MyMC42MjUgOC4wODMzMyAxOS41NDE3IDguMDQxMzMgMTguNTgzMyA4LjY2NjY2TDE3Ljc5MTcgMTMuOTE2N0MyMC4wNDE3IDEzLjkxNjcgMjEuNSA4Ljk1ODMzIDIxLjUgOC45NTgzM1oiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuNSIvPgo8cGF0aCBkPSJNMjEuNSAyOC4zNzVDMjIuNjI1IDMwLjEyNSAyNC43MDgzIDI1LjEyNSAyNS4yMDgzIDI1LjEyNUMyNS41ODMzIDI1LjEyNSAyNS44NzUgMjUgMjYuMDQxNyAyNC43OTE3QzI2Ljc1IDI0LjA0MTcgMjcuMTI1IDIzLjA1IDI3LjEyNSAyMi4yNUMyNy4xMjUgMjEuNDUgMjYuNzUgMjAuNjU4MyAyNi4wNDE3IDE5LjkyNjVDMjUuMzMzMyAxOS4xNzY5IDI0LjMzMzMgMTguOTY4MyAyMy41ODMzIDE5LjE3NjlDMjIuODMzMyAxOS4zODU0IDIxLjk1ODMgMTkuODM3OSAyMS4xMjUgMTkuODM3OUMyMC4yOTE3IDE5LjgzNzkgMTkuNDE2NyAxOS4zODU0IDE4LjY2NjcgMTkuMTc2OUMxNy45MTY3IDE4Ljk2ODMgMTYuOTE2NyAxOS4xNzY5IDE2LjIwODMgMTkuOTI2NUMxNS41IDE5LjY2NzkgMTUuMTI1IDIwLjQ1ODMgMTUuMTI1IDIxLjI1QzE1LjEyNSAyMi4wNTgzIDE1LjUgMjIuODQ1OCAxNi4yMDgzIDIzLjU5MTdDMTYuOTE2NyAyNC4zMzc5IDE5LjkyNSAyNC43OTE3IDIwLjA0MTcgMjQuNzkxN0MyMC4xNjY3IDI0Ljc5MTcgMjAuMjkxNyAyNC44MzMzIDIwLjQxNjcgMjQuODc1QzIwLjg3NSAyNS4wNDEzIDIxLjE2NjcgMjUuMzc1IDIxLjM3NSAyNS44MzMzQzIxLjYyNSAyNi41NDEzIDIxLjUgMjguMzc1IDIxLjUgMjguMzc1WiIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC40Ii8+CjxwYXRoIGQ9Ik0xOC41ODMzIDMxLjQxNjdIMjQuNDE2N1YyOS4xNjY3SDE4LjU4MzNWMzEuNDE2N1oiIGZpbGw9IiNCM0M0QzUiLz4KPHBhdGggZD0iTTE5Ljg3NSAzMy41SDIzLjEyNVYzMS4yNUgxOS44NzVWMzMuNVoiIGZpbGw9IiNDNkQyRDUiLz4KPC9zdmc+Cg=="
+                      alt="Silver Medal"
+                      class="medal-icon"
+                    />
+                  </span>
+                  <span class="name-col">Raghav M</span>
+                  <span class="name-col">44563</span>
+                  <span class="progress-col"
+                    ><i class="fas fa-flag-checkered"></i
+                  ></span>
+                </div>
+              </li>
+              <li>
+                <div class="leaderboard-list-item rank-3">
+                  <span class="rank-col">
+                    <img
+                      src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDMiIGhlaWdodD0iNDMiIHZpZXdCb3g9IjAgMCA0MyA0MyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjEuNSIgY3k9IjIxLjUiIHI9IjIxLjUiIGZpbGw9IiNDRTg0NTIiLz4KPHBhdGggZD0iTTIxLjUgOC45NTgzM0MyMS41IDguOTU4MzMgMjAuMDQxNyAxMy45MTY3IDE3Ljc5MTcgMTMuOTE2N0MxNS41NDE3IDEzLjkxNjcgMTMuNzUgMTMuNzUgMTMuNzUgMTMuNzVDMTMuNzUgMTMuNzUgMTEuNzUgMTcuMDgzMyAxNC4wNDE3IDE4LjQ1ODM0QzE2LjMzMzMgMTkuODMzMyAxNS4wNDE3IDIwLjg3NSAxNS4wNDE3IDIyLjI1QzE1LjA0MTcgMjMuNjI1IDE2LjE2NjcgMjQuMzc1IDE4LjI5MTcgMjUuMTI1QzIwLjQxNjcgMjUuODc1IDIxLjUgMjYuNjI1IDIxLjUgMjguMzc1QzIxLjUgMzAuMTI1IDIyLjU4MzMgMjUuODc1IDI0LjcwODMgMjUuMTI1QzI2LjgyNSAyNC4zNzUgMjcuOTU4MyAyMy42MjUgMjcuOTU4MyAyMi4yNUMyNy45NTgzIDIwLjg3NSAyNi42NjY3IDE5LjgzMzMgMjguOTU4MyAxOC40NTgzQzMxLjI1IDE3LjA4MzMgMjkuMjUgMTMuNzUgMjkuMjUgMTMuNzVDMjkuMjUgMTMuNzUgMjcuNDU4MyAxMy45MTY3IDI1LjIwODMgMTMuOTE2N0MyMi45NTgzIDEzLjkxNjcgMjEuNSA4Ljk1ODMzIDIxLjUgOC45NTgzM1oiIGZpbGw9IiNBNzY4NDAiLz4KPHBhdGggZD0iTTIxLjUgOC45NTgzM0MyMC42MjUgOC4wODMzMyAxOS41NDE3IDguMDQxMzMgMTguNTgzMyA4LjY2NjY2TDE3Ljc5MTcgMTMuOTE2N0MyMC4wNDE3IDEzLjkxNjcgMjEuNSA4Ljk1ODMzIDIxLjUgOC45NTgzM1oiIGZpbGw9IndoaXRlIiBmaWxsLW9wYWNpdHk9IjAuNSIvPgo8cGF0aCBkPSJNMjEuNSAyOC4zNzVDMjIuNjI1IDMwLjEyNSAyNC43MDgzIDI1LjEyNSAyNS4yMDgzIDI1LjEyNUMyNS41ODMzIDI1LjEyNSAyNS44NzUgMjUgMjYuMDQxNyAyNC43OTE3QzI2Ljc1IDI0LjA0MTcgMjcuMTI1IDIzLjA1IDI3LjEyNSAyMi4yNUMyNy4xMjUgMjEuNDUgMjYuNzUgMjAuNjU4MyAyNi4wNDE3IDE5LjkyNjVDMjUuMzMzMyAxOS4xNzY5IDI0LjMzMzMgMTguOTY4MyAyMy41ODMzIDE5LjE3NjlDMjIuODMzMyAxOS4zODU0IDIxLjk1ODMgMTkuODM3OSAyMS4xMjUgMTkuODM3OUMyMC4yOTE3IDE5LjgzNzkgMTkuNDE2NyAxOS4zODU0IDE4LjY2NjcgMTkuMTc2OUMxNy45MTY3IDE4Ljk2ODMgMTYuOTE2NyAxOS4xNzY5IDE2LjIwODMgMTkuOTI2NUMxNS41IDE5LjY2NzkgMTUuMTI1IDIwLjQ1ODMgMTUuMTI1IDIxLjI1QzE1LjEyNSAyMi4wNTgzIDE1LjUgMjIuODQ1OCAxNi4yMDgzIDIzLjU5MTdDMTYuOTE2NyAyNC4zMzc5IDE5LjkyNSAyNC43OTE3IDIwLjA0MTcgMjQuNzkxN0MyMC4xNjY3IDI0Ljc5MTcgMjAuMjkxNyAyNC44MzMzIDIwLjQxNjcgMjQuODc1QzIwLjg3NSAyNS4wNDEzIDIxLjE2NjcgMjUuMzc1IDIxLjM3NSAyNS44MzMzQzIxLjYyNSAyNi41NDEzIDIxLjUgMjguMzc1IDIxLjUgMjguMzc1WiIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC40Ii8+CjxwYXRoIGQ9Ik0xOC41ODMzIDMxLjQxNjdIMjQuNDE2N1YyOS4xNjY3SDE4LjU4MzNWMzEuNDE2N1oiIGZpbGw9IiNCQzdBNjEiLz4KPHBhdGggZD0iTTE5Ljg3NSAzMy41SDIzLjEyNVYzMS4yNUgxOS44NzVWMzMuNVoiIGZpbGw9IiNDRTg0NTIiLz4KPC9zdmc+Cg=="
+                      alt="Bronze Medal"
+                      class="medal-icon"
+                    />
+                  </span>
+                  <span class="name-col">Ryan Z</span>
+                  <span class="name-col">42334</span>
+                  <span class="progress-col"
+                    ><i class="fas fa-flag-checkered"></i
+                  ></span>
+                </div>
+              </li>
+              <li>
+                <div class="leaderboard-list-item">
+                  <span class="rank-col">4</span>
+                  <span class="name-col">Joseph R</span>
+                  <span class="name-col">33233</span>
+                  <span class="progress-col"
+                    ><i class="fas fa-flag-checkered"></i
+                  ></span>
+                </div>
+              </li>
+              <li>
+                <div class="leaderboard-list-item">
+                  <span class="rank-col">5</span>
+                  <span class="name-col">Muwaffaq I</span>
+                  <span class="name-col">4434</span>
+                  <span class="progress-col"
+                    ><i class="fas fa-flag-checkered"></i
+                  ></span>
+                </div>
+              </li>
+              <li>
+                <div class="leaderboard-list-item">
+                  <span class="rank-col">6</span>
+                  <span class="name-col">Joshua L</span>
+                  <span class="progress-col"
+                    ><i class="fas fa-flag-checkered"></i
+                  ></span>
+                </div>
+              </li>
+              <li>
+                <div class="leaderboard-list-item">
+                  <span class="rank-col">7</span>
+                  <span class="name-col">Nick M</span>
+                  <span class="progress-col"
+                    ><i class="fas fa-flag-checkered"></i
+                  ></span>
+                </div>
+              </li>
+              <li>
+                <div class="leaderboard-list-item">
+                  <span class="rank-col">8</span>
+                  <span class="name-col">Ravindra R</span>
+                  <span class="progress-col"
+                    ><i class="fas fa-flag-checkered"></i
+                  ></span>
+                </div>
+              </li>
+              <li>
+                <div class="leaderboard-list-item">
+                  <span class="rank-col">9</span>
+                  <span class="name-col">Ricardo M</span>
+                  <span class="progress-col"
+                    ><i class="fas fa-flag-checkered"></i
+                  ></span>
+                </div>
+              </li>
+              <li>
+                <div class="leaderboard-list-item">
+                  <span class="rank-col">10</span>
+                  <span class="name-col">Shubham P</span>
+                  <span class="progress-col"
+                    ><i class="fas fa-flag-checkered"></i
+                  ></span>
+                </div>
+              </li>
+              <!-- Add more items for scrolling -->
+              <li>
+                <div class="leaderboard-list-item">
+                  <span class="rank-col">11</span
+                  ><span class="name-col">Learner Eleven</span
+                  ><span class="progress-col"
+                    ><i class="fas fa-flag-checkered"></i
+                  ></span>
+                </div>
+              </li>
+              <li>
+                <div class="leaderboard-list-item">
+                  <span class="rank-col">12</span
+                  ><span class="name-col">User Twelve</span
+                  ><span class="progress-col"
+                    ><i class="fas fa-flag-checkered"></i
+                  ></span>
+                </div>
+              </li>
+              <li>
+                <div class="leaderboard-list-item">
+                  <span class="rank-col">13</span
+                  ><span class="name-col">Contestant Thirteen</span
+                  ><span class="progress-col"
+                    ><i class="fas fa-flag-checkered"></i
+                  ></span>
+                </div>
+              </li>
+              <li>
+                <div class="leaderboard-list-item">
+                  <span class="rank-col">14</span
+                  ><span class="name-col">Participant Fourteen</span
+                  ><span class="progress-col"
+                    ><i class="fas fa-flag-checkered"></i
+                  ></span>
+                </div>
+              </li>
+              <li>
+                <div class="leaderboard-list-item">
+                  <span class="rank-col">15</span
+                  ><span class="name-col">Achiever Fifteen</span
+                  ><span class="progress-col"
+                    ><i class="fas fa-flag-checkered"></i
+                  ></span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </section>
+        <!-- Leaderboard Content End -->
+      </main>
+    </div>
+
+    <!-- No Modals from Dashboard.html are needed here unless specifically requested -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
+    <!-- No Chart.js needed for this page -->
+    <script>
+      // Any specific JS for leaderboard page, if needed.
+      // For now, it's primarily HTML/CSS driven.
+    </script>
+  </body>
+</html>

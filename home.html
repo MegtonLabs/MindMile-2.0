@@ -9,6 +9,18 @@
     <!-- Font Awesome is still linked in case you use icons elsewhere, but not for header flow -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
+        *,*::before,*::after{
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        .hidden>a{
+            transition:all 0.2s linear;
+        }
+        .hidden>a:hover{
+            color: #4a4bc4;
+            transform:scale(1.2);
+        }
         /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
@@ -17,6 +29,7 @@
         ::-webkit-scrollbar-track {
             background: #f0f2f5;
         }
+        
 
         ::-webkit-scrollbar-thumb {
             background: #5D5FEF;
@@ -520,7 +533,7 @@
                 class="block py-3 px-6 text-sm text-brand-gray-subtle hover:bg-brand-purple hover:text-white transition-colors duration-300">Features</a>
             <a href="#faq"
                 class="block py-3 px-6 text-sm text-brand-gray-subtle hover:bg-brand-purple hover:text-white transition-colors duration-300">FAQ</a>
-            <a href="#contact"
+            <a href="./contact.html"
                 class="block py-3 px-6 text-sm text-brand-gray-subtle hover:bg-brand-purple hover:text-white transition-colors duration-300">Contact</a>
             <div class="px-6 py-4 border-t border-gray-200">
                 <a href="#"
