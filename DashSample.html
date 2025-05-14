@@ -34,6 +34,12 @@
       overflow-x: hidden;
     }
 
+    body.sidebar-mobile-active {
+      overflow-y: hidden;
+      /* Prevent body scroll when mobile menu is open */
+    }
+
+
     a {
       text-decoration: none;
       color: inherit;
@@ -132,10 +138,12 @@
       border-right: 1px solid #e7eaf3;
       flex-shrink: 0;
       position: fixed;
+      /* Important for positioning and z-index */
       left: 0;
       top: 0;
       bottom: 0;
       z-index: 1000;
+      /* Above overlay, below modals */
       transition: width 0.3s ease, transform 0.3s ease, padding 0.3s ease;
       overflow-y: auto;
       box-shadow: 3px 0 15px rgba(0, 0, 0, 0.05);
@@ -531,6 +539,7 @@
       align-items: center;
       justify-content: center;
       z-index: 2000;
+      /* High z-index for modals */
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -1008,7 +1017,6 @@
       background-size: 1em;
     }
 
-    /* --- NEW CSS for Token Input --- */
     .token-input-container {
       display: flex;
       align-items: center;
@@ -1023,9 +1031,6 @@
       flex-shrink: 0;
       white-space: nowrap;
     }
-
-    /* --- END NEW CSS --- */
-
 
     #share-link-section {
       margin-top: 20px;
@@ -1119,6 +1124,42 @@
     #testPreviewModal .modal-footer {
       justify-content: center;
     }
+
+    /* Mobile Menu Toggle Button */
+    .mobile-menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: #34495e;
+      font-size: 1.5rem;
+      padding: 5px 10px;
+      margin-right: 10px;
+      /* Give it some space */
+      z-index: 1001;
+      /* Above main content, below sidebar if somehow overlapping before open */
+      cursor: pointer;
+    }
+
+    /* Sidebar Overlay for Mobile */
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      /* Below sidebar (z-index: 1000 for sidebar) */
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
 
     /* --- Responsive Design --- */
 
@@ -1249,8 +1290,11 @@
         font-size: 1.9em;
       }
 
+      /* Sidebar returns to its default full width */
       .sidebar {
         width: 260px;
+        transform: translateX(0);
+        /* Ensure it's visible */
       }
 
       .main-content {
@@ -1310,10 +1354,13 @@
       }
     }
 
+    /* Collapsed Sidebar for tablet-like sizes */
     @media (max-width: 991.98px) {
       .sidebar {
         width: 80px;
         padding: 25px 10px;
+        transform: translateX(0);
+        /* Keep it visible but collapsed */
       }
 
       .main-content {
@@ -1350,6 +1397,8 @@
     }
 
     @media (max-width: 767.98px) {
+
+      /* General small screen adjustments */
       .main-content {
         padding: 25px 20px;
       }
@@ -1402,30 +1451,87 @@
       }
     }
 
+    /* Mobile specific styles (smallest screens) */
     @media (max-width: 575.98px) {
+      .mobile-menu-toggle {
+        display: block;
+        order: 1;
+        margin-right: auto;
+        z-index: 1001;
+        /* Ensure clickable */
+      }
+
       .sidebar {
+        width: 260px;
+        /* Full width for mobile slide-in */
+        padding: 25px 15px;
+        /* Reset padding */
+        border-right: 1px solid #e7eaf3;
+        /* Reset border */
+        box-shadow: 3px 0 15px rgba(0, 0, 0, 0.05);
+        /* Reset shadow */
         transform: translateX(-100%);
-        width: 0;
-        padding: 0;
-        border: none;
-        box-shadow: none;
-        position: absolute;
+        /* Initially hidden */
+        /* position: fixed, top, left, bottom, z-index:1000 are inherited and correct */
+      }
+
+      .sidebar.mobile-open {
+        transform: translateX(0);
+        /* Slide in */
+      }
+
+      /* Ensure content inside sidebar is fully visible when open on mobile */
+      /* These override the collapsed styles from max-width: 991.98px */
+      .sidebar .sidebar-title,
+      .sidebar .sidebar-menu .menu-heading,
+      .sidebar .sidebar-menu ul li a span {
+        opacity: 1;
+        pointer-events: auto;
+        width: auto;
+      }
+
+      .sidebar .sidebar-header {
+        justify-content: flex-start;
+        /* Align header content left */
+        padding-left: 10px;
+      }
+
+      .sidebar .sidebar-logo {
+        margin-right: 12px;
+        /* Restore logo margin */
+      }
+
+      .sidebar .sidebar-menu ul li a {
+        justify-content: flex-start;
+        /* Align menu items left */
+        padding: 13px 18px;
+        /* Restore menu item padding */
+      }
+
+      .sidebar .sidebar-menu ul li a i {
+        margin-right: 16px;
+        /* Restore icon margin */
+        font-size: 1.1em;
+        /* Restore icon size */
       }
 
       .main-content {
         margin-left: 0;
+        /* Main content takes full width */
         width: 100%;
         padding: 20px 15px;
       }
 
       .main-header {
         margin-bottom: 25px;
+        align-items: center;
       }
 
       .main-header .greeting {
         text-align: center;
         flex-basis: 100%;
         margin-bottom: 10px;
+        order: 2;
       }
 
       .main-header .header-actions {
@@ -1433,25 +1539,19 @@
         width: 100%;
         flex-direction: column;
         align-items: stretch;
-      }
-
-      .main-header .greeting h1 {
-        font-size: 1.5rem;
+        order: 3;
       }
 
       .create-test-btn {
-        order: 1;
         width: 100%;
         justify-content: center;
       }
 
       .search-bar {
-        order: 2;
         max-width: none;
       }
 
       .profile-container {
-        order: 3;
         align-self: center;
         margin-top: 10px;
       }
@@ -1540,16 +1640,13 @@
       .time-limit-group select {
         padding-right: 30px;
       }
-
-      .time-limit-group {
-        flex-wrap: wrap;
-      }
     }
   </style>
 </head>
 
 <body>
-  <nav class="sidebar">
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <span class="sidebar-logo">M</span>
       <span class="sidebar-title">MindMile</span>
@@ -1586,6 +1683,9 @@
   <div class="dashboard-container">
     <main class="main-content">
       <header class="main-header">
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open sidebar menu" aria-expanded="false">
+          <i class="fas fa-bars"></i>
+        </button>
         <div class="greeting">
           <h1>Hi, User</h1>
         </div>
@@ -1696,7 +1796,6 @@
                   Private</label>
               </div>
             </div>
-            <!-- NEW: Token Input Section -->
             <div class="form-group" id="privateTestTokenGroup" style="display: none;">
               <label for="testAccessToken">Access Token (for private test)</label>
               <div class="token-input-container">
@@ -1709,7 +1808,6 @@
                 Participants will need this token to access the test.
               </small>
             </div>
-            <!-- END: Token Input Section -->
             <div class="form-group">
               <label for="testStartTime">Start Time</label>
               <input type="datetime-local" id="testStartTime" name="testStartTime" />
@@ -1909,6 +2007,12 @@
         console.error("Could not find canvas context for accuracyChart");
       }
 
+      // Mobile Sidebar Toggle Elements
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+      // Modal Elements
       const createTestBtnTrigger = document.getElementById(
         "createTestBtnTrigger"
       );
@@ -1919,10 +2023,10 @@
       const createTestForm = document.getElementById("createTestForm");
       const testNameInput = document.getElementById("testName");
       const testDescriptionInput = document.getElementById("testDescription");
-      const visibilityRadios = document.querySelectorAll('input[name="visibility"]'); // New
-      const privateTestTokenGroup = document.getElementById("privateTestTokenGroup"); // New
-      const testAccessTokenInput = document.getElementById("testAccessToken"); // New
-      const generateTokenBtn = document.getElementById("generateTokenBtn"); // New
+      const visibilityRadios = document.querySelectorAll('input[name="visibility"]');
+      const privateTestTokenGroup = document.getElementById("privateTestTokenGroup");
+      const testAccessTokenInput = document.getElementById("testAccessToken");
+      const generateTokenBtn = document.getElementById("generateTokenBtn");
       const testStartTimeInput = document.getElementById("testStartTime");
       const testEndTimeInput = document.getElementById("testEndTime");
       const testTimeLimitValueInput =
@@ -1963,6 +2067,24 @@
       );
       const previewModalTitle = document.getElementById("previewModalTitle");
 
+      // Mobile Sidebar Logic
+      if (mobileMenuToggle && sidebar && sidebarOverlay) {
+        mobileMenuToggle.addEventListener('click', () => {
+          const isOpened = sidebar.classList.toggle('mobile-open');
+          sidebarOverlay.classList.toggle('active', isOpened);
+          document.body.classList.toggle('sidebar-mobile-active', isOpened);
+          mobileMenuToggle.setAttribute('aria-expanded', isOpened.toString());
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+          sidebar.classList.remove('mobile-open');
+          sidebarOverlay.classList.remove('active');
+          document.body.classList.remove('sidebar-mobile-active');
+          mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        });
+      }
+
+      // Modal and Form Logic
       let keywords = ["Quiz", "Test"];
       let createdQuestions = [];
       let currentEditingQuestionId = null;
@@ -2195,16 +2317,16 @@
         }
       };
 
-      // --- NEW: Token Field Logic ---
       const toggleTokenField = () => {
-        const selectedVisibility = document.querySelector('input[name="visibility"]:checked').value;
+        if (!privateTestTokenGroup || !testAccessTokenInput) return; // Guard
+        const selectedVisibility = document.querySelector('input[name="visibility"]:checked')?.value;
         if (selectedVisibility === "private") {
           privateTestTokenGroup.style.display = "block";
         } else {
           privateTestTokenGroup.style.display = "none";
-          testAccessTokenInput.value = ""; // Clear token if switching to public
+          testAccessTokenInput.value = "";
         }
-        validateOverallForm(); // Re-validate form when visibility changes
+        validateOverallForm();
       };
 
       const generateRandomToken = (length = 10) => {
@@ -2222,57 +2344,64 @@
 
       generateTokenBtn?.addEventListener('click', () => {
         testAccessTokenInput.value = generateRandomToken();
-        validateOverallForm(); // Re-validate after generating token
+        validateOverallForm();
       });
-      // --- END: Token Field Logic ---
 
 
       const validateOverallForm = () => {
         const testNameValid = testNameInput.value.trim() !== "";
         const questionsExist = createdQuestions.length > 0;
-        let tokenValid = true; // Assume valid unless proven otherwise
+        let tokenValid = true;
         const selectedVisibility = document.querySelector('input[name="visibility"]:checked')?.value;
 
         if (selectedVisibility === "private") {
+          if (!testAccessTokenInput) return false; // Guard
           tokenValid = testAccessTokenInput.value.trim() !== "";
         }
 
         const isValid = testNameValid && questionsExist && tokenValid;
-        publishTestBtn.disabled = !isValid;
-        previewTestBtn.disabled = !questionsExist; // Preview doesn't depend on token
+        if (publishTestBtn) publishTestBtn.disabled = !isValid;
+        if (previewTestBtn) previewTestBtn.disabled = !questionsExist;
         return isValid;
       };
 
       const resetModal = () => {
-        createTestForm.reset();
-        // Ensure public is checked by default and token field is handled
-        document.querySelector('input[name="visibility"][value="public"]').checked = true;
-        toggleTokenField(); // This will hide the token field and clear its value via the listener
-        testAccessTokenInput.value = ""; // Explicitly clear just in case
+        if (createTestForm) createTestForm.reset();
+        const publicRadio = document.querySelector('input[name="visibility"][value="public"]');
+        if (publicRadio) publicRadio.checked = true;
 
-        testStartTimeInput.value = "";
-        testEndTimeInput.value = "";
-        testExpiryDateInput.value = "";
-        testTimeLimitValueInput.value = "";
-        testTimeLimitUnitSelect.value = "minutes";
+        toggleTokenField();
+        if (testAccessTokenInput) testAccessTokenInput.value = "";
+
+        if (testStartTimeInput) testStartTimeInput.value = "";
+        if (testEndTimeInput) testEndTimeInput.value = "";
+        if (testExpiryDateInput) testExpiryDateInput.value = "";
+        if (testTimeLimitValueInput) testTimeLimitValueInput.value = "";
+        if (testTimeLimitUnitSelect) testTimeLimitUnitSelect.value = "minutes";
+
         keywords = ["Quiz", "Test"];
         updateKeywordsDisplay();
-        keywordInput.value = "";
+        if (keywordInput) keywordInput.value = "";
+
         createdQuestions = [];
         nextQuestionId = 1;
         renderQuestionsList();
         hideQuestionEditor();
-        shareLinkSection.style.display = "none";
-        document.getElementById("test-details-section").style.display =
-          "block";
-        document.getElementById("questions-section").style.display = "block";
-        document.querySelector(
-          "#createTestModal .modal-footer"
-        ).style.display = "flex";
+
+        if (shareLinkSection) shareLinkSection.style.display = "none";
+        const detailsSection = document.getElementById("test-details-section");
+        if (detailsSection) detailsSection.style.display = "block";
+        const qSection = document.getElementById("questions-section");
+        if (qSection) qSection.style.display = "block";
+
+        const modalFooter = document.querySelector("#createTestModal .modal-footer");
+        if (modalFooter) modalFooter.style.display = "flex";
+
         validateOverallForm();
       };
 
       const showPreviewModal = () => {
+        if (!previewModalTitle || !previewQuestionsContainer || !testPreviewModalOverlay) return; // Guard
         previewModalTitle.textContent =
           testNameInput.value.trim() || "Test Preview";
         previewQuestionsContainer.innerHTML = "";
@@ -2313,18 +2442,17 @@
         }
         testPreviewModalOverlay.classList.add("active");
       };
-      const closePreviewModal = () =>
-        testPreviewModalOverlay.classList.remove("active");
+      const closePreviewModal = () => {
+        if (testPreviewModalOverlay) testPreviewModalOverlay.classList.remove("active");
+      }
 
       const publishTest = () => {
         if (!validateOverallForm()) {
-          // Check specifically for token if private
-          if (document.querySelector('input[name="visibility"]:checked').value === "private" && testAccessTokenInput.value.trim() === "") {
+          if (document.querySelector('input[name="visibility"]:checked')?.value === "private" && testAccessTokenInput?.value.trim() === "") {
             alert("Please enter or generate an access token for the private test.");
-            testAccessTokenInput.focus();
+            testAccessTokenInput?.focus();
             return;
           }
-          // If other validation failed, it will be caught by the button's disabled state
           return;
         }
 
@@ -2350,9 +2478,10 @@
           expiryDate: testExpiryDateInput.value || null,
           keywords: keywords,
           questions: createdQuestions,
+          accessToken: null // Initialize
         };
 
-        if (testData.visibility === "private") {
+        if (testData.visibility === "private" && testAccessTokenInput) {
           testData.accessToken = testAccessTokenInput.value.trim();
         }
 
@@ -2361,35 +2490,47 @@
           36
         )}`;
         console.log("Simulating API call to save test...");
-        shareLinkInput.value = fakeShareLink;
-        shareLinkSection.style.display = "block";
-        document.getElementById("test-details-section").style.display =
-          "none";
-        document.getElementById("questions-section").style.display = "none";
+
+        if (shareLinkInput) shareLinkInput.value = fakeShareLink;
+        if (shareLinkSection) shareLinkSection.style.display = "block";
+
+        const detailsSect = document.getElementById("test-details-section");
+        if (detailsSect) detailsSect.style.display = "none";
+        const qSect = document.getElementById("questions-section");
+        if (qSect) qSect.style.display = "none";
+
         hideQuestionEditor();
-        document.querySelector(
-          "#createTestModal .modal-footer"
-        ).style.display = "none";
-        shareLinkSection.scrollIntoView({ behavior: "smooth" });
+        const modalFoot = document.querySelector("#createTestModal .modal-footer");
+        if (modalFoot) modalFoot.style.display = "none";
+
+        shareLinkSection?.scrollIntoView({ behavior: "smooth" });
       };
 
+      // Event Listeners Setup
       createTestBtnTrigger?.addEventListener("click", () => {
-        resetModal(); // This will also handle initial token field state
-        createTestModalOverlay.classList.add("active");
+        resetModal();
+        createTestModalOverlay?.classList.add("active");
       });
       modalCloseBtn?.addEventListener("click", () =>
-        createTestModalOverlay.classList.remove("active")
+        createTestModalOverlay?.classList.remove("active")
       );
       createTestModalOverlay?.addEventListener("click", (event) => {
         if (event.target === createTestModalOverlay)
-          createTestModalOverlay.classList.remove("active");
+          createTestModalOverlay?.classList.remove("active");
       });
+
       window.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
-          if (createTestModalOverlay.classList.contains("active"))
+          if (sidebar?.classList.contains('mobile-open')) {
+            sidebar.classList.remove('mobile-open');
+            sidebarOverlay?.classList.remove('active');
+            document.body.classList.remove('sidebar-mobile-active');
+            mobileMenuToggle?.setAttribute('aria-expanded', 'false');
+          } else if (createTestModalOverlay?.classList.contains("active")) {
             createTestModalOverlay.classList.remove("active");
-          if (testPreviewModalOverlay.classList.contains("active"))
+          } else if (testPreviewModalOverlay?.classList.contains("active")) {
             closePreviewModal();
+          }
         }
       });
 
@@ -2403,14 +2544,16 @@
         addKeyword(keywordInput.value)
       );
       testNameInput?.addEventListener("input", validateOverallForm);
-      testAccessTokenInput?.addEventListener('input', validateOverallForm); // New: validate on token input
+      testAccessTokenInput?.addEventListener('input', validateOverallForm);
       addOptionBtn?.addEventListener("click", () => addOptionToEditor());
       saveQuestionBtn?.addEventListener("click", saveQuestion);
       cancelEditBtn?.addEventListener("click", hideQuestionEditor);
       addQuestionBtn?.addEventListener("click", () => showQuestionEditor());
       previewTestBtn?.addEventListener("click", showPreviewModal);
       publishTestBtn?.addEventListener("click", publishTest);
+
       copyLinkBtn?.addEventListener("click", () => {
+        if (!shareLinkInput) return;
         shareLinkInput.select();
         shareLinkInput.setSelectionRange(0, 99999);
         try {
@@ -2422,18 +2565,20 @@
         } catch (err) {
           console.error("Failed to copy link: ", err);
         }
-        window.getSelection().removeAllRanges();
+        window.getSelection()?.removeAllRanges();
       });
+
       previewModalCloseBtn?.addEventListener("click", closePreviewModal);
       closePreviewBtn?.addEventListener("click", closePreviewModal);
       testPreviewModalOverlay?.addEventListener("click", (event) => {
         if (event.target === testPreviewModalOverlay) closePreviewModal();
       });
 
+      // Initial State Setup
       updateKeywordsDisplay();
       renderQuestionsList();
-      validateOverallForm();
-      toggleTokenField(); // Initial call to set token field visibility based on default radio
+      toggleTokenField(); // Initial call based on default radio
+      validateOverallForm(); // Initial validation
     });
   </script>
 </body>
