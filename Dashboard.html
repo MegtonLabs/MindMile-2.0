@@ -1012,6 +1012,24 @@
         background-position: right 10px center;
         background-size: 1em;
       }
+      
+      /* --- NEW CSS for Token Input --- */
+      .token-input-container {
+        display: flex;
+        align-items: center;
+        gap: 10px; 
+      }
+
+      .token-input-container input[type="text"] {
+        flex-grow: 1;
+      }
+
+      .token-input-container button {
+        flex-shrink: 0;
+        white-space: nowrap; 
+      }
+      /* --- END NEW CSS --- */
+
 
       #share-link-section {
         margin-top: 20px;
@@ -1720,11 +1738,25 @@
                     Public</label
                   >
                   <label
-                    ><input type="radio" name="visibility" value="unlisted" />
+                    ><input type="radio" name="visibility" value="private" />
                     Private</label
                   >
                 </div>
               </div>
+              <!-- NEW: Token Input Section -->
+              <div class="form-group" id="privateTestTokenGroup" style="display: none;">
+                <label for="testAccessToken">Access Token (for private test)</label>
+                <div class="token-input-container">
+                  <input type="text" id="testAccessToken" name="testAccessToken" placeholder="Enter or generate a token">
+                  <button type="button" id="generateTokenBtn" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-random"></i> Generate
+                  </button>
+                </div>
+                <small class="form-text-helper">
+                  Participants will need this token to access the test.
+                </small>
+              </div>
+              <!-- END: Token Input Section -->
               <div class="form-group">
                 <label for="testStartTime">Start Time</label>
                 <input
@@ -1994,6 +2026,10 @@
         const createTestForm = document.getElementById("createTestForm");
         const testNameInput = document.getElementById("testName");
         const testDescriptionInput = document.getElementById("testDescription");
+        const visibilityRadios = document.querySelectorAll('input[name="visibility"]'); // New
+        const privateTestTokenGroup = document.getElementById("privateTestTokenGroup"); // New
+        const testAccessTokenInput = document.getElementById("testAccessToken"); // New
+        const generateTokenBtn = document.getElementById("generateTokenBtn"); // New
         const testStartTimeInput = document.getElementById("testStartTime");
         const testEndTimeInput = document.getElementById("testEndTime");
         const testTimeLimitValueInput =
@@ -2266,18 +2302,62 @@
             renderQuestionsList();
           }
         };
+        
+        // --- NEW: Token Field Logic ---
+        const toggleTokenField = () => {
+            const selectedVisibility = document.querySelector('input[name="visibility"]:checked').value;
+            if (selectedVisibility === "private") {
+                privateTestTokenGroup.style.display = "block";
+            } else {
+                privateTestTokenGroup.style.display = "none";
+                testAccessTokenInput.value = ""; // Clear token if switching to public
+            }
+            validateOverallForm(); // Re-validate form when visibility changes
+        };
+
+        const generateRandomToken = (length = 10) => {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let token = '';
+            for (let i = 0; i < length; i++) {
+                token += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return token;
+        };
+
+        visibilityRadios.forEach(radio => {
+            radio.addEventListener('change', toggleTokenField);
+        });
+
+        generateTokenBtn?.addEventListener('click', () => {
+            testAccessTokenInput.value = generateRandomToken();
+            validateOverallForm(); // Re-validate after generating token
+        });
+        // --- END: Token Field Logic ---
+
 
         const validateOverallForm = () => {
           const testNameValid = testNameInput.value.trim() !== "";
           const questionsExist = createdQuestions.length > 0;
-          const isValid = testNameValid && questionsExist;
+          let tokenValid = true; // Assume valid unless proven otherwise
+          const selectedVisibility = document.querySelector('input[name="visibility"]:checked')?.value;
+
+          if (selectedVisibility === "private") {
+              tokenValid = testAccessTokenInput.value.trim() !== "";
+          }
+          
+          const isValid = testNameValid && questionsExist && tokenValid;
           publishTestBtn.disabled = !isValid;
-          previewTestBtn.disabled = !questionsExist;
+          previewTestBtn.disabled = !questionsExist; // Preview doesn't depend on token
           return isValid;
         };
 
         const resetModal = () => {
           createTestForm.reset();
+          // Ensure public is checked by default and token field is handled
+          document.querySelector('input[name="visibility"][value="public"]').checked = true;
+          toggleTokenField(); // This will hide the token field and clear its value via the listener
+          testAccessTokenInput.value = ""; // Explicitly clear just in case
+
           testStartTimeInput.value = "";
           testEndTimeInput.value = "";
           testExpiryDateInput.value = "";
@@ -2345,7 +2425,17 @@
           testPreviewModalOverlay.classList.remove("active");
 
         const publishTest = () => {
-          if (!validateOverallForm()) return;
+          if (!validateOverallForm()){
+            // Check specifically for token if private
+            if (document.querySelector('input[name="visibility"]:checked').value === "private" && testAccessTokenInput.value.trim() === "") {
+                alert("Please enter or generate an access token for the private test.");
+                testAccessTokenInput.focus();
+                return;
+            }
+             // If other validation failed, it will be caught by the button's disabled state
+            return;
+          }
+
           let timeLimitInMinutes = null;
           const timeValue = testTimeLimitValueInput.value;
           const timeUnit = testTimeLimitUnitSelect.value;
@@ -2369,6 +2459,11 @@
             keywords: keywords,
             questions: createdQuestions,
           };
+
+          if (testData.visibility === "private") {
+            testData.accessToken = testAccessTokenInput.value.trim();
+          }
+
           console.log("Publishing Test Data:", testData);
           const fakeShareLink = `https://mindmile.app/test/${Date.now().toString(
             36
@@ -2387,7 +2482,7 @@
         };
 
         createTestBtnTrigger?.addEventListener("click", () => {
-          resetModal();
+          resetModal(); // This will also handle initial token field state
           createTestModalOverlay.classList.add("active");
         });
         modalCloseBtn?.addEventListener("click", () =>
@@ -2416,6 +2511,7 @@
           addKeyword(keywordInput.value)
         );
         testNameInput?.addEventListener("input", validateOverallForm);
+        testAccessTokenInput?.addEventListener('input', validateOverallForm); // New: validate on token input
         addOptionBtn?.addEventListener("click", () => addOptionToEditor());
         saveQuestionBtn?.addEventListener("click", saveQuestion);
         cancelEditBtn?.addEventListener("click", hideQuestionEditor);
@@ -2445,6 +2541,7 @@
         updateKeywordsDisplay();
         renderQuestionsList();
         validateOverallForm();
+        toggleTokenField(); // Initial call to set token field visibility based on default radio
       });
     </script>
   </body>
