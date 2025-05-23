@@ -8,7 +8,6 @@
     <!-- Include Matter.js from CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
     <style>
-        /* Basic Reset */
         * {
             margin: 0;
             padding: 0;
@@ -21,19 +20,15 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            /* Changed font for a more modern feel */
             line-height: 1.7;
             color: #333;
             background-color: #f4f7f6;
             overflow-x: hidden;
         }
 
-        /* Header & Navigation */
         header {
             background-color: rgba(255, 255, 255, 0.85);
-            /* Slightly transparent */
             backdrop-filter: blur(10px);
-            /* Frosted glass effect */
             color: #333;
             padding: 1rem 0;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
@@ -47,7 +42,6 @@
 
         nav {
             max-width: 1200px;
-            /* Slightly wider */
             margin: 0 auto;
             padding: 0 1.5rem;
             display: flex;
@@ -58,9 +52,7 @@
         nav .logo {
             font-size: 2rem;
             font-weight: 700;
-            /* Bolder logo */
             color: #0056b3;
-            /* Primary accent color */
             text-decoration: none;
             letter-spacing: -1px;
         }
@@ -72,7 +64,6 @@
 
         nav ul li {
             margin-left: 2rem;
-            /* Increased spacing */
         }
 
         nav ul li a {
@@ -82,7 +73,6 @@
             transition: color 0.3s ease, border-bottom-color 0.3s ease;
             padding: 0.5rem 0.2rem;
             position: relative;
-            /* For pseudo-element underline */
         }
 
         nav ul li a::after {
@@ -116,18 +106,13 @@
             cursor: pointer;
         }
 
-        /* Main Content Area */
         main {
             padding-top: 75px;
-            /* Adjust based on actual header height */
         }
 
-        /* Hero Section */
         .hero {
-            /* Animated Gradient Background */
             background: linear-gradient(135deg, #6dd5ed, #2193b0, #0056b3);
             background-size: 400% 400%;
-            /* For gradient animation */
             animation: gradientBG 15s ease infinite;
             color: #fff;
             min-height: calc(100vh - 75px);
@@ -138,9 +123,7 @@
             text-align: center;
             padding: 2rem 1.5rem;
             position: relative;
-            /* For Matter.js canvas */
             overflow: hidden;
-            /* Important for Matter.js canvas */
         }
 
         #matter-canvas {
@@ -150,12 +133,9 @@
             width: 100%;
             height: 100%;
             z-index: 1;
-            /* Behind hero content */
             pointer-events: none;
-            /* Allows clicking through to content initially */
         }
 
-        /* Make canvas interactive only for elements, not the whole bg */
         #matter-container canvas {
             pointer-events: auto !important;
         }
@@ -164,7 +144,6 @@
         .hero-content {
             position: relative;
             z-index: 2;
-            /* Above Matter.js canvas */
         }
 
         @keyframes gradientBG {
@@ -183,14 +162,12 @@
 
         .hero h1 {
             font-size: 3.5rem;
-            /* Larger */
             margin-bottom: 1rem;
             font-weight: 700;
             letter-spacing: 0.5px;
             line-height: 1.2;
         }
 
-        /* For character animation */
         .hero h1 .char {
             display: inline-block;
             opacity: 0;
@@ -207,15 +184,12 @@
 
         .hero p {
             font-size: 1.4rem;
-            /* Larger */
             margin-bottom: 2rem;
             max-width: 750px;
             font-weight: 300;
-            /* Lighter */
             opacity: 0;
             transform: translateY(20px);
             animation: fadeInUp 1s ease-out 0.8s forwards;
-            /* Delay after title */
         }
 
         @keyframes fadeInUp {
@@ -233,17 +207,14 @@
             font-size: 1.2rem;
             font-weight: bold;
             border-radius: 50px;
-            /* Pill shape */
             cursor: pointer;
             text-decoration: none;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
             box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
             display: inline-block;
-            /* Needed for transform */
             opacity: 0;
             transform: translateY(20px) scale(0.9);
             animation: popIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) 1.2s forwards;
-            /* Delay after paragraph */
         }
 
         @keyframes popIn {
@@ -258,7 +229,6 @@
             box-shadow: 0 12px 25px rgba(254, 202, 87, 0.5);
         }
 
-        /* Section Styling */
         .section {
             padding: 5rem 1.5rem;
             text-align: center;
@@ -270,21 +240,18 @@
 
         .section-dark {
             background-color: #edf2f7;
-            /* Lighter dark */
         }
 
         .section h2 {
             font-size: 2.8rem;
             margin-bottom: 1rem;
             color: #2d3748;
-            /* Darker heading */
             font-weight: 600;
         }
 
         .section .section-subtitle {
             font-size: 1.2rem;
             color: #718096;
-            /* Softer subtitle */
             margin-bottom: 3.5rem;
             max-width: 650px;
             margin-left: auto;
@@ -292,11 +259,9 @@
         }
 
 
-        /* Features Section */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            /* Slightly larger cards */
             gap: 2.5rem;
             max-width: 1200px;
             margin: 0 auto;
@@ -306,30 +271,23 @@
             background-color: #ffffff;
             padding: 2.5rem 2rem;
             border-radius: 12px;
-            /* More rounded */
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
             text-align: left;
-            /* Align text left for a common card style */
             transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             border-top: 4px solid transparent;
-            /* For hover effect */
         }
 
         .feature-card:nth-child(1) {
             border-color: #4299e1;
         }
 
-        /* Blue */
         .feature-card:nth-child(2) {
             border-color: #48bb78;
         }
 
-        /* Green */
         .feature-card:nth-child(3) {
             border-color: #ed8936;
         }
-
-        /* Orange */
 
 
         .feature-card:hover {
@@ -339,23 +297,18 @@
 
         .feature-card img.icon {
             width: 50px;
-            /* Slightly smaller */
             height: 50px;
             margin-bottom: 1.5rem;
-            /* background-color is removed, use actual transparent icons */
             float: left;
-            /* Icon on the left of title/text */
             margin-right: 1rem;
         }
 
         .feature-card-content {
             overflow: hidden;
-            /* To contain floated icon */
         }
 
         .feature-card h3 {
             font-size: 1.5rem;
-            /* Slightly adjusted */
             margin-bottom: 0.6rem;
             color: #2d3748;
         }
@@ -363,17 +316,14 @@
         .feature-card p {
             font-size: 1rem;
             color: #4a5568;
-            /* Softer text */
             line-height: 1.8;
         }
 
-        /* Contact Section */
         .contact-form {
             max-width: 700px;
             margin: 2rem auto 0 auto;
             background-color: #fff;
             padding: 3rem;
-            /* More padding */
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             text-align: left;
@@ -381,14 +331,12 @@
 
         .form-group {
             margin-bottom: 1.8rem;
-            /* Increased spacing */
         }
 
         .form-group label {
             display: block;
             margin-bottom: 0.6rem;
             font-weight: 600;
-            /* Bolder label */
             color: #4a5568;
         }
 
@@ -397,9 +345,7 @@
         .form-group textarea {
             width: 100%;
             padding: 1rem 1.2rem;
-            /* More padding */
             border: 1px solid #cbd5e0;
-            /* Softer border */
             border-radius: 6px;
             font-size: 1rem;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -421,7 +367,6 @@
 
         .submit-button {
             background: linear-gradient(45deg, #007bff, #0056b3);
-            /* Primary gradient */
             color: #fff;
             border: none;
             padding: 1rem 2.5rem;
@@ -441,12 +386,9 @@
             box-shadow: 0 10px 22px rgba(0, 86, 179, 0.4);
         }
 
-        /* Footer */
         footer {
             background-color: #1a202c;
-            /* Darker footer */
             color: #a0aec0;
-            /* Lighter text for dark bg */
             text-align: center;
             padding: 3rem 1.5rem;
         }
@@ -458,7 +400,6 @@
 
         footer a {
             color: #63b3ed;
-            /* Brighter link color */
             text-decoration: none;
             transition: color 0.3s ease;
         }
@@ -468,11 +409,9 @@
             text-decoration: underline;
         }
 
-        /* Scroll Animations (Intersection Observer) */
         .animate-on-scroll {
             opacity: 0;
             transform: translateY(60px) scale(0.9);
-            /* More pronounced initial state */
             transition: opacity 0.8s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
@@ -481,7 +420,6 @@
             transform: translateY(0) scale(1);
         }
 
-        /* Responsive adjustments */
         @media (max-width: 768px) {
             nav {
                 padding: 0 1rem;
@@ -494,7 +432,6 @@
                 top: 50%;
                 transform: translateY(-50%);
                 z-index: 1001;
-                /* Above nav background */
             }
 
             nav ul {
@@ -531,7 +468,6 @@
                 height: 2px;
             }
 
-            /* Adjust underline for mobile */
 
             .hero h1 {
                 font-size: 2.5rem;
@@ -553,7 +489,6 @@
                 text-align: center;
             }
 
-            /* Center card content on mobile */
             .feature-card img.icon {
                 float: none;
                 margin: 0 auto 1rem auto;
@@ -682,26 +617,23 @@
             const currentYearSpan = document.getElementById('currentYear');
             const heroTitle = document.getElementById('hero-title');
 
-            // Set current year
             if (currentYearSpan) {
                 currentYearSpan.textContent = new Date().getFullYear();
             }
 
-            // Hero Title Character Animation
             if (heroTitle) {
                 const text = heroTitle.textContent;
-                heroTitle.innerHTML = ''; // Clear original text
+                heroTitle.innerHTML = ''; 
                 text.split('').forEach((char, index) => {
                     const span = document.createElement('span');
                     span.className = 'char';
-                    span.textContent = char === ' ' ? '\u00A0' : char; // Handle spaces
+                    span.textContent = char === ' ' ? '\u00A0' : char; 
                     span.style.animationDelay = `${index * 0.05}s`;
                     heroTitle.appendChild(span);
                 });
             }
 
 
-            // Mobile menu toggle
             if (menuToggle && navMenu) {
                 menuToggle.addEventListener('click', () => {
                     navMenu.classList.toggle('active');
@@ -710,7 +642,6 @@
                 });
             }
 
-            // Close mobile menu on link click
             navLinks.forEach(link => {
                 link.addEventListener('click', () => {
                     if (navMenu.classList.contains('active')) {
@@ -720,12 +651,11 @@
                 });
             });
 
-            // Active nav link highlighting & smooth scroll
             const sections = document.querySelectorAll('section[id]');
             function updateActiveNavLink() {
                 let currentSectionId = 'home';
                 sections.forEach(section => {
-                    const sectionTop = section.offsetTop - header.offsetHeight - 100; // Adjusted offset
+                    const sectionTop = section.offsetTop - header.offsetHeight - 100;
                     if (window.scrollY >= sectionTop) {
                         currentSectionId = section.getAttribute('id');
                     }
@@ -738,9 +668,8 @@
                 });
             }
             window.addEventListener('scroll', updateActiveNavLink);
-            updateActiveNavLink(); // Initial call
+            updateActiveNavLink();
 
-            // Intersection Observer for scroll animations
             const animatedElements = document.querySelectorAll('.animate-on-scroll');
             if (animatedElements.length > 0) {
                 const observer = new IntersectionObserver((entries) => {
@@ -748,15 +677,13 @@
                         if (entry.isIntersecting) {
                             entry.target.classList.add('is-visible');
                         } else {
-                            // Optional: remove class to re-animate on scroll up
-                            // entry.target.classList.remove('is-visible');
+                            
                         }
                     });
-                }, { threshold: 0.15 }); // Trigger a bit earlier/later
+                }, { threshold: 0.15 }); 
                 animatedElements.forEach(el => observer.observe(el));
             }
 
-            // Contact form submission (dummy)
             const contactForm = document.getElementById('contactForm');
             if (contactForm) {
                 contactForm.addEventListener('submit', (e) => {
@@ -770,15 +697,13 @@
                 });
             }
 
-            // --- Matter.js Setup ---
             const matterContainer = document.getElementById('matter-container');
             if (matterContainer && typeof Matter !== 'undefined') {
                 const engine = Engine.create({
-                    // Disable gravity initially or make it very weak for a floating effect
-                    // gravity: { y: 0.2 }
+                    
                 });
                 const world = engine.world;
-                world.gravity.y = 0.4; // Adjust gravity as needed
+                world.gravity.y = 0.4; 
 
                 let renderWidth = matterContainer.clientWidth;
                 let renderHeight = matterContainer.clientHeight;
@@ -789,35 +714,33 @@
                     options: {
                         width: renderWidth,
                         height: renderHeight,
-                        wireframes: false, // Show filled shapes
-                        background: 'transparent' // Make canvas transparent
+                        wireframes: false,
+                        background: 'transparent' 
                     }
                 });
 
-                // Boundaries (walls and floor)
                 const wallThickness = 100;
                 World.add(world, [
-                    Bodies.rectangle(renderWidth / 2, renderHeight + wallThickness / 2, renderWidth, wallThickness, { isStatic: true, render: { visible: false } }), // Floor
-                    Bodies.rectangle(-wallThickness / 2, renderHeight / 2, wallThickness, renderHeight * 2, { isStatic: true, render: { visible: false } }),    // Left wall
-                    Bodies.rectangle(renderWidth + wallThickness / 2, renderHeight / 2, wallThickness, renderHeight * 2, { isStatic: true, render: { visible: false } }) // Right wall
-                    // Optional: Ceiling, if you want objects to bounce off it
-                    // Bodies.rectangle(renderWidth / 2, -wallThickness / 2, renderWidth, wallThickness, { isStatic: true, render: { visible: false } })
+                    Bodies.rectangle(renderWidth / 2, renderHeight + wallThickness / 2, renderWidth, wallThickness, { isStatic: true, render: { visible: false } }), 
+                    Bodies.rectangle(-wallThickness / 2, renderHeight / 2, wallThickness, renderHeight * 2, { isStatic: true, render: { visible: false } }),    
+                    Bodies.rectangle(renderWidth + wallThickness / 2, renderHeight / 2, wallThickness, renderHeight * 2, { isStatic: true, render: { visible: false } }) 
+                  
                 ]);
 
                 // Add some random shapes
                 const shapes = [];
                 const shapeColors = ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#f368e0', '#ff9f43'];
 
-                for (let i = 0; i < 15; i++) { // Number of shapes
-                    const x = Math.random() * renderWidth * 0.8 + renderWidth * 0.1; // Spawn within central 80%
-                    const y = Math.random() * -renderHeight * 0.5; // Spawn above the viewport
-                    const radius = Math.random() * 20 + 10; // Random size
+                for (let i = 0; i < 15; i++) {
+                    const x = Math.random() * renderWidth * 0.8 + renderWidth * 0.1; 
+                    const y = Math.random() * -renderHeight * 0.5;
+                    const radius = Math.random() * 20 + 10; 
                     const color = shapeColors[Math.floor(Math.random() * shapeColors.length)];
 
                     let shape;
                     if (Math.random() > 0.66) {
                         shape = Bodies.rectangle(x, y, radius * 2, radius * 2, {
-                            restitution: 0.5, // Bounciness
+                            restitution: 0.5, 
                             friction: 0.3,
                             angle: Math.random() * Math.PI * 2,
                             render: { fillStyle: color, strokeStyle: 'rgba(0,0,0,0.1)', lineWidth: 2 }
@@ -829,7 +752,7 @@
                             render: { fillStyle: color, strokeStyle: 'rgba(0,0,0,0.1)', lineWidth: 2 }
                         });
                     } else {
-                        shape = Bodies.polygon(x, y, Math.floor(Math.random() * 3) + 3, radius * 1.5, { // Triangles, squares, pentagons
+                        shape = Bodies.polygon(x, y, Math.floor(Math.random() * 3) + 3, radius * 1.5, {
                             restitution: 0.6,
                             friction: 0.2,
                             angle: Math.random() * Math.PI * 2,
@@ -840,55 +763,37 @@
                 }
                 World.add(world, shapes);
 
-                // Mouse control
                 const mouse = Mouse.create(render.canvas);
                 const mouseConstraint = MouseConstraint.create(engine, {
                     mouse: mouse,
                     constraint: {
-                        stiffness: 0.1, // Softer dragging
+                        stiffness: 0.1, 
                         render: { visible: false }
                     }
                 });
                 World.add(world, mouseConstraint);
-                render.mouse = mouse; // Keep the renderer's mouse object updated
+                render.mouse = mouse; 
 
-                // Run the engine and renderer
                 Engine.run(engine);
                 Render.run(render);
 
-                // Responsive Matter.js canvas
                 window.addEventListener('resize', () => {
                     renderWidth = matterContainer.clientWidth;
                     renderHeight = matterContainer.clientHeight;
                     render.canvas.width = renderWidth;
                     render.canvas.height = renderHeight;
-                    Render.lookAt(render, { // Adjust viewport
+                    Render.lookAt(render, {
                         min: { x: 0, y: 0 },
                         max: { x: renderWidth, y: renderHeight }
                     });
 
-                    // Update wall positions (this is a simplified update, more robust would remove and re-add)
-                    // For simplicity, we'll just update the existing static bodies if possible,
-                    // or you might need to remove and re-add them for perfect scaling.
-                    // This part can be tricky with Matter.js resizing.
-                    // A common approach is to recreate walls or scale the world.
-                    // Here's a basic attempt to update, but may need refinement for complex scenes.
                     Composite.allBodies(world).forEach(body => {
-                        if (body.isStatic) { // Assuming only walls are static
+                        if (body.isStatic) { 
                             if (body.label === 'floor') Matter.Body.setPosition(body, { x: renderWidth / 2, y: renderHeight + wallThickness / 2 });
-                            // Add similar for other walls if needed, this requires labeling them or more complex logic
                         }
                     });
                 });
 
-                // Clean up Matter.js instance when navigating away or closing (important for SPAs or hot-reloading environments)
-                // window.addEventListener('beforeunload', () => {
-                //     Render.stop(render);
-                //     Runner.stop(runner); // If you use Runner.run(runner, engine)
-                //     Engine.clear(engine);
-                //     render.canvas.remove();
-                //     render.textures = {};
-                // });
 
 
             } else {
